@@ -5,9 +5,6 @@ namespace Grimoire.Botting
 {
     public class Configuration
     {
-        private static Configuration _instance;
-        public static Configuration Instance => _instance ?? (_instance = new Configuration());
-
         public List<IBotCommand> Commands
         {
             get;
@@ -265,11 +262,6 @@ namespace Grimoire.Botting
             get;
             set;
         }
-
-        public static List<string> BlockedPlayers
-        {
-            get;
-        }
         
         public bool AFK
         {
@@ -282,8 +274,8 @@ namespace Grimoire.Botting
             set; 
         }
 
-        public static Dictionary<string, int> Tempvalues = new Dictionary<string, int>();
-        public static Dictionary<string, string> Tempvariable = new Dictionary<string, string>();
+        public Dictionary<string, int> Tempvalues = new Dictionary<string, int>();
+        public Dictionary<string, string> Tempvariable = new Dictionary<string, string>();
 
         public Configuration()
         {
@@ -294,14 +286,6 @@ namespace Grimoire.Botting
             Drops = new List<string>();
             Items = new List<string>();
             NotifyUponDrop = new List<string>();
-        }
-
-        static Configuration()
-        {
-            BlockedPlayers = new List<string>
-            {
-                
-            };
         }
     }
 }

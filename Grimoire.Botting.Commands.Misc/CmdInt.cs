@@ -35,16 +35,16 @@ namespace Grimoire.Botting.Commands.Misc
             switch (type)
             {
                 case Types.Set:
-                    if (Configuration.Tempvalues.ContainsKey(Int))
-                        Configuration.Tempvalues[Int] = Value;
+                    if (instance.Configuration.Tempvalues.ContainsKey(Int))
+                        instance.Configuration.Tempvalues[Int] = Value;
                     else
-                        Configuration.Tempvalues.Add(Int, Value);
+                        instance.Configuration.Tempvalues.Add(Int, Value);
                     break;
                 case Types.Upper:
-                    Configuration.Tempvalues[Int]++;
+                    instance.Configuration.Tempvalues[Int]++;
                     break;
                 case Types.Lower:
-                    Configuration.Tempvalues[Int]--;
+                    instance.Configuration.Tempvalues[Int]--;
                     break;
             }
             return Task.FromResult<object>(null);

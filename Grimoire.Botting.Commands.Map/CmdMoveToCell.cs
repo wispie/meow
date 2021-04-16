@@ -20,14 +20,16 @@ namespace Grimoire.Botting.Commands.Map
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Others;
-            while (!Player.Cell.Equals(Cell, StringComparison.OrdinalIgnoreCase))
+            BotData botData = instance.botData;
+            Player player = instance.player;
+            botData.BotState = BotData.State.Others;
+            while (!player.Cell.Equals(Cell, StringComparison.OrdinalIgnoreCase))
             {
-                Player.MoveToCell(Cell, Pad);
+                player.MoveToCell(Cell, Pad);
                 await Task.Delay(500);
             }
-            BotData.BotCell = Cell;
-            BotData.BotPad = Pad;
+            botData.BotCell = Cell;
+            botData.BotPad = Pad;
         }
 
         public override string ToString()

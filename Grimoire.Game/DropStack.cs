@@ -11,6 +11,13 @@ namespace Grimoire.Game
 {
     public class DropStack : IReadOnlyList<InventoryItem>, IReadOnlyCollection<InventoryItem>, IEnumerable<InventoryItem>, IEnumerable
     {
+        private World world;
+        private Proxy proxy;
+        public DropStack(World newWorld, Proxy newProxy)
+        {
+            world = newWorld;
+            proxy = newProxy;
+        }
         private readonly List<InventoryItem> _drops = new List<InventoryItem>();
 
         private readonly List<KeyValuePair<int, Stopwatch>> _cooldown = new List<KeyValuePair<int, Stopwatch>>();
@@ -31,7 +38,7 @@ namespace Grimoire.Game
 
         public DropStack()
         {
-            World.ItemDropped += OnItemDropped;
+            world.ItemDropped += OnItemDropped;
         }
 
         public IEnumerator<InventoryItem> GetEnumerator()
@@ -85,7 +92,7 @@ namespace Grimoire.Game
                 _cooldown.RemoveAll((KeyValuePair<int, Stopwatch> c) => c.Value.ElapsedMilliseconds >= 3000);
                 if (!IsCoolingDown(itemId))
                 {
-                    await Proxy.Instance.SendToServer($"%xt%zm%getDrop%{World.RoomId}%{itemId}%");
+                    await proxy.SendToServer($"%xt%zm%getDrop%{world.RoomId}%{itemId}%");
                     _cooldown.Add(new KeyValuePair<int, Stopwatch>(itemId, Stopwatch.StartNew()));
                     _drops.RemoveAll((InventoryItem d) => d.Id == itemId);
                     return true;

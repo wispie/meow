@@ -37,14 +37,12 @@ namespace Grimoire.UI
         private DarkButton btnSend;
         private TableLayoutPanel tableLayoutPanel1;
         public DarkButton btnRemove;
-
-        public static PacketSpammer Instance
+        private Spammer spammer;
+        private Proxy proxy;
+        public PacketSpammer(Spammer newSpammer, Proxy newProxy)
         {
-            get;
-        } = new PacketSpammer();
-
-        public PacketSpammer()
-        {
+            spammer = newSpammer;
+            proxy = newProxy;
             InitializeComponent();
         }
 
@@ -78,8 +76,8 @@ namespace Grimoire.UI
 
         public void btnStop_Click(object sender, EventArgs e)
         {
-            Spammer.Instance.Stop();
-            Spammer.Instance.IndexChanged -= IndexChanged;
+            spammer.Stop();
+            spammer.IndexChanged -= IndexChanged;
             SetButtonsEnabled(enabled: true);
         }
 
@@ -90,8 +88,8 @@ namespace Grimoire.UI
                 SetButtonsEnabled(enabled: false);
                 List<string> packets = lstPackets.Items.Cast<string>().ToList();
                 int delay = (int)numDelay.Value;
-                Spammer.Instance.IndexChanged += IndexChanged;
-                Spammer.Instance.Start(packets, delay);
+                spammer.IndexChanged += IndexChanged;
+                spammer.Start(packets, delay);
             }
         }
 
@@ -100,7 +98,7 @@ namespace Grimoire.UI
             if (txtPacket.TextLength > 0)
             {
                 btnSend.Enabled = false;
-                await Proxy.Instance.SendToServer(txtPacket.Text);
+                await proxy.SendToServer(txtPacket.Text);
                 btnSend.Enabled = true;
             }
         }

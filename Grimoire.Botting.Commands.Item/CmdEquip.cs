@@ -20,9 +20,12 @@ namespace Grimoire.Botting.Commands.Item
             set;
         }
 
+        private Player player;
         public async Task Execute(IBotEngine instance)
         {
-            InventoryItem item = Player.Inventory.Items.FirstOrDefault((InventoryItem i) => i.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase) && i.IsEquippable);
+            player = instance.player;
+            BotData botData = instance.botData;
+            InventoryItem item = instance.player.Inventory.Items.FirstOrDefault((InventoryItem i) => i.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase) && i.IsEquippable);
             if (item == null)
             {
                 return;
@@ -32,29 +35,29 @@ namespace Grimoire.Botting.Commands.Item
                 if (!Safe)
                 {
                     if (item.Category == "Item")
-                        Player.EquipPotion(item.Id, item.Description, item.File, item.Name);
+                        instance.player.EquipPotion(item.Id, item.Description, item.File, item.Name);
                     else
-                        Player.Equip(item.Id);
+                        instance.player.Equip(item.Id);
                     return;
                 }
 
-                BotData.BotState = BotData.State.Transaction;
-                while (instance.IsRunning && Player.CurrentState == Player.State.InCombat)
+                botData.BotState = BotData.State.Transaction;
+                while (instance.IsRunning && instance.player.CurrentState == Player.State.InCombat)
                 {
-                    Player.MoveToCell(Player.Cell, Player.Pad);
+                    instance.player.MoveToCell(instance.player.Cell, instance.player.Pad);
                     await Task.Delay(1000);
                 }
-                await instance.WaitUntil(() => World.IsActionAvailable(LockActions.EquipItem));
+                await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.EquipItem));
                 if (item.Category == "Item")
-                    Player.EquipPotion(item.Id, item.Description, item.File, item.Name);
+                    instance.player.EquipPotion(item.Id, item.Description, item.File, item.Name);
                 else
-                    Player.Equip(item.Id);
+                    instance.player.Equip(item.Id);
             }
         }
 
         public bool IsEquipped(int ItemID)
         {
-            return Player.Inventory.Items.FirstOrDefault((InventoryItem it) => it.IsEquipped && it.Id == ItemID) != null;
+            return player.Inventory.Items.FirstOrDefault((InventoryItem it) => it.IsEquipped && it.Id == ItemID) != null;
         }
 
         public override string ToString()

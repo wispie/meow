@@ -15,7 +15,7 @@ namespace Grimoire.Botting.Commands.Combat
 
         public async Task Execute(IBotEngine instance)
         {
-            Player.AttackMonster(Monster);
+            instance.player.AttackMonster(Monster);
         }
 
         // Token: 0x0600000C RID: 12 RVA: 0x000020ED File Offset: 0x000002ED

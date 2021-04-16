@@ -13,7 +13,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (Player.Quests.IsInProgress(int.Parse(Value1)))
+            if (instance.player.Quests.IsInProgress(int.Parse(Value1)))
             {
                 instance.Index++;
             }

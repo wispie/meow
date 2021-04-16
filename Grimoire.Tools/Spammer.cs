@@ -14,15 +14,12 @@ namespace Grimoire.Tools
 
         private CancellationTokenSource _cancellationTokenSource;
 
-        public static Spammer Instance
-        {
-            get;
-        } = new Spammer();
-
         public event Action<int> IndexChanged;
 
-        private Spammer()
+        private Proxy proxy;
+        public Spammer(Proxy newProxy)
         {
+            proxy = newProxy;
         }
 
         public void Start(List<string> packets, int delay)
@@ -48,7 +45,7 @@ namespace Grimoire.Tools
                     index = 0;
                 }
                 this.IndexChanged?.Invoke(index);
-                await Proxy.Instance.SendToServer(_packets[index++]);
+                await proxy.SendToServer(_packets[index++]);
                 await Task.Delay(_delay);
             }
         }

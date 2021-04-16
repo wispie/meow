@@ -21,28 +21,31 @@ namespace Grimoire.Botting.Commands.Misc
 
         public async Task Execute(IBotEngine instance)
         {
+            Player player = instance.player;
+            World world = instance.world;
+            Proxy proxy = instance.proxy;
             string text;
 
             if ( IsVar(Packet) )
             {
-                text = Configuration.Tempvariable[GetVar(Packet)];
+                text = instance.Configuration.Tempvariable[GetVar(Packet)];
             }
             else
             {
                 text = Packet;
             }
             
-            text = text.Replace("{ROOM_ID}", World.RoomId.ToString()).Replace("{ROOM_NUMBER}", World.RoomNumber.ToString()).Replace("PLAYERNAME", Player.Username);
-            text = text.Replace("{GETMAP}", Player.Map);
+            text = text.Replace("{ROOM_ID}", world.RoomId.ToString()).Replace("{ROOM_NUMBER}", world.RoomNumber.ToString()).Replace("PLAYERNAME", player.Username);
+            text = text.Replace("{GETMAP}", player.Map);
             while (text.Contains("--"))
             {
                 text = new Regex("-{1,}", RegexOptions.IgnoreCase).Replace(text, (Match m) => "-");
             }
             text = new Regex("(1e)[0-9]{1,}", RegexOptions.IgnoreCase).Replace(text, (Match m) => "100000");
             if (Client)
-                await Proxy.Instance.SendToClient(text);
+                await proxy.SendToClient(text);
             else
-                await Proxy.Instance.SendToServer(text);
+                await proxy.SendToServer(text);
             if (text.Contains("%xt%zm%gar%"))
                 await Task.Delay(700);
             else

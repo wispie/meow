@@ -13,13 +13,13 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (!Configuration.Tempvariable.ContainsKey(Value1))
+            if (!instance.Configuration.Tempvariable.ContainsKey(Value1))
             {
-                Configuration.Tempvariable.Add(Value1, Value2);
+                instance.Configuration.Tempvariable.Add(Value1, Value2);
             }
             else
             {
-                Configuration.Tempvariable[Value1] = Value2;
+                instance.Configuration.Tempvariable[Value1] = Value2;
             }
 
             return Task.FromResult<object>(null);

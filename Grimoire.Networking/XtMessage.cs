@@ -1,3 +1,7 @@
+using Grimoire.Botting;
+using Grimoire.Game;
+using Grimoire.UI;
+
 namespace Grimoire.Networking
 {
     public class XtMessage : Message

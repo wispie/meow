@@ -8,7 +8,7 @@ namespace Grimoire.Botting.Commands.Map
     {
         public async Task Execute(IBotEngine instance)
         {
-            Player.SetSpawnPoint();
+            instance.player.SetSpawnPoint();
         }
 
         public override string ToString()

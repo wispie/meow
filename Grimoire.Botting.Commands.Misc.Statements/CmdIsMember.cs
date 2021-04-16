@@ -13,7 +13,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (!Player.IsMember)
+            if (instance.player.IsMember)
             {
                 instance.Index++;
             }

@@ -15,11 +15,13 @@ namespace Grimoire.Botting.Commands.Item
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Transaction;
-            await WaitUntil(() => World.IsActionAvailable(LockActions.LoadShop));
-            Shop.ResetShopInfo();
-            Shop.Load(ShopId);
-            await WaitUntil(() => Shop.IsShopLoaded);
+            Shop shop = instance.shop;
+            BotData botData = instance.botData;
+            botData.BotState = BotData.State.Transaction;
+            await WaitUntil(() => instance.world.IsActionAvailable(LockActions.LoadShop));
+            shop.ResetShopInfo();
+            shop.Load(ShopId);
+            await WaitUntil(() => shop.IsShopLoaded);
         }
 
         private async Task WaitUntil(Func<bool> condition, int timeout = 15)

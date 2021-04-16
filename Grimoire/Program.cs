@@ -8,21 +8,18 @@ using System.Windows.Forms;
 
 namespace Grimoire
 {
-    internal static class Program
+    internal class Program
     {
         [STAThread]
         private static void Main()
         {
-            if (FindAvailablePort(out int port))
-            {
-                Proxy.Instance.ListenerPort = port;
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(defaultValue: false);
-                Application.Run(new Root());
-            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(defaultValue: false);
+            RootHolder Instance = new RootHolder();
+            Application.Run(Instance);
         }
         
-        private static bool FindAvailablePort(out int port)
+        public static bool FindAvailablePort(out int port)
         {
             Random random = new Random();
             IPGlobalProperties iPGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();

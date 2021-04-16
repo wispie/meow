@@ -14,7 +14,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (!Value1.Equals(Player.Cell, StringComparison.OrdinalIgnoreCase))
+            if (!Value1.Equals(instance.player.Cell, StringComparison.OrdinalIgnoreCase))
             {
                 instance.Index++;
             }

@@ -5,7 +5,6 @@ using Grimoire.Game;
 
 namespace Grimoire.Botting.Commands.Combat
 {
-    // Token: 0x02000002 RID: 2
     public class CmdUseSkill : IBotCommand
     {
         public string Skill { get; set; }
@@ -20,24 +19,24 @@ namespace Grimoire.Botting.Commands.Combat
         
         public async Task Execute(IBotEngine instance)
         {
+            Player player = instance.player;
             if (this.Wait)
             {
-                await Task.Delay(Player.SkillAvailable(this.Index));
+                await Task.Delay(player.SkillAvailable(this.Index));
             }
-            if (Player.Health / (double)Player.HealthMax * 100.0 <= SafeHp)
+            if (player.Health / (double)player.HealthMax * 100.0 <= SafeHp)
             {
-                if (Player.Mana / (double)Player.ManaMax * 100.0 <= SafeMp)
+                if (player.Mana / (double)player.ManaMax * 100.0 <= SafeMp)
                 {
                     if (this.Index != "5")
                     {
-                        Player.AttackMonster("*");
+                        player.AttackMonster("*");
                     }
-                    Player.UseSkill(this.Index);
+                    player.UseSkill(this.Index);
                 }
             }
         }
-
-        // Token: 0x0600000C RID: 12 RVA: 0x000020ED File Offset: 0x000002ED
+        
         public override string ToString()
         {
             return "Skill " + this.Skill;

@@ -13,7 +13,8 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (Player.CurrentState != Player.State.InCombat)
+            Player player = instance.player;
+            if (instance.player.CurrentState != Player.State.InCombat)
             {
                 instance.Index++;
             }

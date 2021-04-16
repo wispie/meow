@@ -15,7 +15,9 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (Configuration.Instance.Items.TrueForAll(x => Player.Inventory.ContainsItem(x, "1")))
+            Configuration configuration = instance.Configuration;
+            Player player = instance.player;
+            if (configuration.Items.TrueForAll(x => player.Inventory.ContainsItem(x, "1")))
             {
 
             }

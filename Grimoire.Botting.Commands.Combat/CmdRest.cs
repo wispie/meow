@@ -13,20 +13,21 @@ namespace Grimoire.Botting.Commands.Combat
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Rest;
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.Rest), () => instance.IsRunning && Player.IsLoggedIn);
+            Player player = instance.player;
+            instance.botData.BotState = BotData.State.Rest;
+            await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.Rest), () => instance.IsRunning && player.IsLoggedIn);
             if (instance.Configuration.ExitCombatBeforeRest)
             {
-                while (Player.CurrentState == Player.State.InCombat)
+                while (instance.player.CurrentState == Player.State.InCombat)
                 {
-                    Player.MoveToCell(Player.Cell, Player.Pad);
+                    instance.player.MoveToCell(instance.player.Cell, instance.player.Pad);
                     await Task.Delay(1250);
                 }
             }
-            Player.Rest();
+            instance.player.Rest();
             if (Full)
             {
-                await instance.WaitUntil(() => Player.Mana >= Player.ManaMax && Player.Health >= Player.HealthMax);
+                await instance.WaitUntil(() => player.Mana >= player.ManaMax && player.Health >= player.HealthMax);
             }
         }
 

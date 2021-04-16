@@ -8,66 +8,76 @@ using System.Linq;
 
 namespace Grimoire.Game
 {
-    public static class World
+    public class World
     {
-        public static void RefreshDictionary() => _players = JsonConvert.DeserializeObject<Dictionary<string, PlayerInfo>>(Flash.Call("Players", new object[0]));
+        private Flash flash;
+        private Player player;
+        private LogForm logForm;
+        public World(Flash newFlash, Player newPlayer, LogForm newLogForm)
+        {
+            logForm = newLogForm;
+            flash = newFlash;
+            player = newPlayer;
+        }
 
-        private static Dictionary<string, PlayerInfo> _players; 
+        public void RefreshDictionary() => _players = JsonConvert.DeserializeObject<Dictionary<string, PlayerInfo>>(flash.Call("Players", new object[0]));
+
+        private Dictionary<string, PlayerInfo> _players; 
         /// <summary>
         /// Gets a list of all players in the current map.
         /// </summary>
-        public static List<PlayerInfo> Players => _players.Values.ToList();
+        public List<PlayerInfo> Players => _players.Values.ToList();
 
-        public static List<ShopInfo> LoadedShops;
+        public List<ShopInfo> LoadedShops;
 
-        public static DropStack DropStack;
+        public DropStack DropStack;
 
-        private static readonly Dictionary<LockActions, string> LockedActions;
+        private readonly Dictionary<LockActions, string> LockedActions;
 
-        public static List<Monster> VisibleMonsters;
+        public List<Monster> VisibleMonsters;
 
-        public static List<Monster> AvailableMonsters => Flash.Call<List<Monster>>("GetMonstersInCell", new string[0]);
+        public List<Monster> AvailableMonsters => flash.Call<List<Monster>>("GetMonstersInCell", new string[0]);
 
-        public static bool IsMapLoading => !Flash.Call<bool>("MapLoadComplete", new string[0]);
+        public bool IsMapLoading => !flash.Call<bool>("MapLoadComplete", new string[0]);
 
-        public static List<string> PlayersInMap => Flash.Call<List<string>>("PlayersInMap", new string[0]);
+        public List<string> PlayersInMap => flash.Call<List<string>>("PlayersInMap", new string[0]);
 
-        public static List<InventoryItem> ItemTree => Flash.Call<List<InventoryItem>>("GetItemTree", new string[0]);
+        public List<InventoryItem> ItemTree => flash.Call<List<InventoryItem>>("GetItemTree", new string[0]);
 
-        public static string[] Cells => Flash.Call<string[]>("GetCells", new string[0]);
+        public string[] Cells => flash.Call<string[]>("GetCells", new string[0]);
 
-        public static int RoomId => Flash.Call<int>("RoomId", new string[0]);
+        public int RoomId => flash.Call<int>("RoomId", new string[0]);
 
-        public static int RoomNumber => Flash.Call<int>("RoomNumber", new string[0]);
+        public int RoomNumber => flash.Call<int>("RoomNumber", new string[0]);
 
-        public static event Action<InventoryItem> ItemDropped;
+        public event Action<InventoryItem> ItemDropped;
 
-        public static event Action<ShopInfo> ShopLoaded;
+        public event Action<ShopInfo> ShopLoaded;
 
-        public static void OnItemDropped(InventoryItem drop)
+        public void OnItemDropped(InventoryItem drop)
         {
             Action<InventoryItem> itemDropped = ItemDropped;
             if (itemDropped != null)
             {
-                string text = $"{(Player.Inventory.Items.Find((InventoryItem x) => x.Name == drop.Name) ?? new InventoryItem()).Quantity}";
-                LogForm.Instance.AppendDrops($"[Item Drop] {drop.Quantity} {drop.Name} at {DateTime.Now:hh:mm:ss tt} [{text}] \r\n");
+                string text = $"{(player.Inventory.Items.Find((InventoryItem x) => x.Name == drop.Name) ?? new InventoryItem(this)).Quantity}";
+                logForm.AppendDrops($"[Item Drop] {drop.Quantity} {drop.Name} at {DateTime.Now:hh:mm:ss tt} [{text}] \r\n");
                 itemDropped(drop);
             }
         }
 
-        public static void OnShopLoaded(ShopInfo shopInfo)
+        public void OnShopLoaded(ShopInfo shopInfo)
         {
             ShopLoaded?.Invoke(shopInfo);
             LoadedShops.Add(shopInfo);
         }
 
-        public static bool IsActionAvailable(LockActions action) => Flash.Call<bool>("IsActionAvailable", LockedActions[action]);
+        public bool IsActionAvailable(LockActions action) => flash.Call<bool>("IsActionAvailable", LockedActions[action]);
 
-        public static void SetSpawnPoint() => Flash.Call("SetSpawnPoint", new string[0]);
+        public void SetSpawnPoint() => flash.Call("SetSpawnPoint", new string[0]);
 
-        public static bool IsMonsterAvailable(string name) => Flash.Call<bool>("IsMonsterAvailable", new string[1]{name});
+        public bool IsMonsterAvailable(string name) => flash.Call<bool>("IsMonsterAvailable", new string[1]{name});
 
-        static World()
+        World()
         {
             LoadedShops = new List<ShopInfo>();
             DropStack = new DropStack();
@@ -130,7 +140,7 @@ namespace Grimoire.Game
                     "tfer"
                 }
             };
-            VisibleMonsters = Flash.Call<List<Monster>>("GetVisibleMonstersInCell", new string[0]);
+            VisibleMonsters = flash.Call<List<Monster>>("GetVisibleMonstersInCell", new string[0]);
         }
     }
 }

@@ -8,47 +8,60 @@ using System.Threading.Tasks;
 
 namespace Grimoire.Tools
 {
-    public static class AutoRelogin
+    public class AutoRelogin
     {
-        public static bool IsTemporarilyKicked => Flash.Call<bool>("IsTemporarilyKicked", new string[0]);
-
-        public static bool AreServersLoaded => Flash.Call<bool>("AreServersLoaded", new string[0]);
-
-        public static void Login()
+        private Flash flash;
+        private OptionsManager optionsManager;
+        private BotManager botManager;
+        private Player player;
+        private World world;
+        public AutoRelogin(Player newPlayer, BotManager newBotManager, Flash newFlash, OptionsManager newOptions, World newWorld)
         {
-            Flash.Call("Login", new string[0]);
+            world = newWorld;
+            flash = newFlash;
+            player = newPlayer;
+            botManager = newBotManager;
+            optionsManager = newOptions;
+        }
+        public bool IsTemporarilyKicked => flash.Call<bool>("IsTemporarilyKicked", new string[0]);
+
+        public bool AreServersLoaded => flash.Call<bool>("AreServersLoaded", new string[0]);
+
+        public void Login()
+        {
+            flash.Call("Login", new string[0]);
         }
 
-        public static bool ResetServers()
+        public bool ResetServers()
         {
-            return Flash.Call<bool>("ResetServers", new string[0]);
+            return flash.Call<bool>("ResetServers", new string[0]);
         }
 
-        public static void Connect(Server server)
+        public void Connect(Server server)
         {
-            Flash.Call("Connect", server.Name);
+            flash.Call("Connect", server.Name);
         }
 
-        public static async Task Login(Server server, int relogDelay, CancellationTokenSource cts, bool ensureSuccess)
+        public async Task Login(Server server, int relogDelay, CancellationTokenSource cts, bool ensureSuccess)
         {
-            bool killLag = OptionsManager.LagKiller;
-            bool disableAnims = OptionsManager.DisableAnimations;
-            bool hidePlayers = OptionsManager.HidePlayers;
+            bool killLag = optionsManager.LagKiller;
+            bool disableAnims = optionsManager.DisableAnimations;
+            bool hidePlayers = optionsManager.HidePlayers;
             if (killLag)
             {
-                OptionsManager.LagKiller = false;
+                optionsManager.LagKiller = false;
             }
             if (disableAnims)
             {
-                OptionsManager.DisableAnimations = false;
+                optionsManager.DisableAnimations = false;
             }
             if (hidePlayers)
             {
-                OptionsManager.HidePlayers = false;
+                optionsManager.HidePlayers = false;
             }
             if (IsTemporarilyKicked)
             {
-                await BotManager.Instance.ActiveBotEngine.WaitUntil(() => !IsTemporarilyKicked, () => !cts.IsCancellationRequested, 65);
+                await botManager.ActiveBotEngine.WaitUntil(() => !IsTemporarilyKicked, () => !cts.IsCancellationRequested, 65);
             }
             if (cts.IsCancellationRequested)
             {
@@ -56,13 +69,13 @@ namespace Grimoire.Tools
             }
             ResetServers();
             Login();
-            await BotManager.Instance.ActiveBotEngine.WaitUntil(() => AreServersLoaded, () => !cts.IsCancellationRequested, 30);
+            await botManager.ActiveBotEngine.WaitUntil(() => AreServersLoaded, () => !cts.IsCancellationRequested, 30);
             if (cts.IsCancellationRequested)
             {
                 return;
             }
             Connect(server);
-            await BotManager.Instance.ActiveBotEngine.WaitUntil(() => !World.IsMapLoading, () => !cts.IsCancellationRequested, 40);
+            await botManager.ActiveBotEngine.WaitUntil(() => !world.IsMapLoading, () => !cts.IsCancellationRequested, 40);
             if (!cts.IsCancellationRequested)
             {
                 await Task.Delay(relogDelay);
@@ -72,20 +85,20 @@ namespace Grimoire.Tools
                 }
                 if (killLag)
                 {
-                    OptionsManager.LagKiller = true;
+                    optionsManager.LagKiller = true;
                 }
                 if (disableAnims)
                 {
-                    OptionsManager.DisableAnimations = true;
+                    optionsManager.DisableAnimations = true;
                 }
                 if (hidePlayers)
                 {
-                    OptionsManager.HidePlayers = true;
+                    optionsManager.HidePlayers = true;
                 }
             }
         }
 
-        private static async Task EnsureLoginSuccess(CancellationTokenSource cts)
+        private async Task EnsureLoginSuccess(CancellationTokenSource cts)
         {
             for (int i = 0; i < 20; i++)
             {
@@ -94,15 +107,15 @@ namespace Grimoire.Tools
                 {
                     return;
                 }
-                string map = Player.Map;
+                string map = player.Map;
                 if (!string.IsNullOrEmpty(map) && !map.Equals("name", StringComparison.OrdinalIgnoreCase) && !map.Equals("battleon", StringComparison.OrdinalIgnoreCase))
                 {
                     break;
                 }
             }
-            if (Player.Map.Equals("battleon", StringComparison.OrdinalIgnoreCase))
+            if (player.Map.Equals("battleon", StringComparison.OrdinalIgnoreCase))
             {
-                Player.Logout();
+                player.Logout();
             }
         }
     }

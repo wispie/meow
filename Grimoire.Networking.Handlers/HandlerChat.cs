@@ -10,7 +10,6 @@ namespace Grimoire.Networking.Handlers
 {
     public class HandlerChat : IXtMessageHandler
     {
-        
         public string[] HandledCommands
         {
             get;
@@ -22,6 +21,19 @@ namespace Grimoire.Networking.Handlers
             "message"
         };
 
+        private Proxy proxy;
+        private World world;
+        private Player player;
+        private OptionsManager optionsManager;
+        private LogForm logForm;
+        public HandlerChat(Proxy newProxy, World newWorld, Player newPlayer, OptionsManager newOptions, LogForm newLogForm)
+        {
+            optionsManager = newOptions;
+            logForm = newLogForm;
+            proxy = newProxy;
+            player = newPlayer;
+            world = newWorld;
+        }
         Dictionary<string, string> tercesstravels = new Dictionary<string, string>
         {
                 { ".oblivion",  "Enter,     Spawn"  },
@@ -32,10 +44,9 @@ namespace Grimoire.Networking.Handlers
                 { ".lae",       "m5,        Top"    },
                 { ".polish",    "m12,       Top"    }
         };
-
+        
         Dictionary<string, string> chatcommands = new Dictionary<string, string>
         {
-                { ".pvp",    $"Server, %xt%zm%PVPQr%{Player.UserID}%doomarena%"  },
                 { ".server", "Server, {arg5}"},
                 { ".client", "Client, {arg5}"}
         };
@@ -62,11 +73,11 @@ namespace Grimoire.Networking.Handlers
                     tosend = new Regex("{arg(.)}", RegexOptions.IgnoreCase).Replace(tosend, (Match m) => texts[1].Replace("#037:", "%"));
                     if (cmdargs[0] == "Client")
                     {
-                        Proxy.Instance.SendToClient(tosend);
+                        proxy.SendToClient(tosend);
                     }
                     else
                     {
-                        Proxy.Instance.SendToServer(tosend);
+                        proxy.SendToServer(tosend);
                     }
                     MessageBox.Show(tosend);
                 }
@@ -82,16 +93,16 @@ namespace Grimoire.Networking.Handlers
                     {
                         roomnum += "1";
                     }
-                    if (Player.Map.ToLower() != "citadel")
+                    if (player.Map.ToLower() != "citadel")
                     {
-                        Player.ExecuteTravel(new List<IBotCommand>{
-                            Player.CreateJoinCommand(
+                        player.ExecuteTravel(new List<IBotCommand>{
+                            player.CreateJoinCommand(
                                 "citadel-100000", 
                                 "m22", "Left"),
                         });
                     }
-                    Player.ExecuteTravel(new List<IBotCommand>{
-                        Player.CreateJoinCommand(
+                    player.ExecuteTravel(new List<IBotCommand>{
+                        player.CreateJoinCommand(
                             map: "tercessuinotlim" + roomnum, 
                             cell: tercesstravels[text].Split(',')[0], 
                             pad: tercesstravels[text].Split(',')[1])
@@ -101,7 +112,7 @@ namespace Grimoire.Networking.Handlers
             }
             string type = message.Arguments[2];
             string tolog = message.Arguments[4];
-            message.Arguments[5] = (message.Arguments[5] == Player.Username && OptionsManager.ChangeChat) ? "You" : message.Arguments[5];
+            message.Arguments[5] = (message.Arguments[5] == player.Username) && optionsManager.ChangeChat ? "You" : message.Arguments[5];
             switch (type)
             {
                 case "chatm":
@@ -109,11 +120,11 @@ namespace Grimoire.Networking.Handlers
                     break;
 
                 case "whisper":
-                    tolog = message.Arguments[6] == Player.Username ? "From " + message.Arguments[5] : "To " + message.Arguments[6];
+                    tolog = message.Arguments[6] == player.Username ? "From " + message.Arguments[5] : "To " + message.Arguments[6];
                     tolog = $"{tolog}: {message.Arguments[4]}";
                     break;
             }
-            LogForm.Instance.AppendChat(string.Format("[{0:hh:mm:ss}] {1} \r\n", DateTime.Now, tolog));
+            logForm.AppendChat(string.Format("[{0:hh:mm:ss}] {1} \r\n", DateTime.Now, tolog));
         }
 	}
 }

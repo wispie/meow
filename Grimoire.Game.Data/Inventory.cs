@@ -7,11 +7,17 @@ namespace Grimoire.Game.Data
 {
     public class Inventory
     {
-        public List<InventoryItem> Items => Flash.Call<List<InventoryItem>>("GetInventoryItems", new string[0]);
+        private Flash flash;
+        public Inventory(Flash newFlash)
+        {
+            flash = newFlash;
+        }
 
-        public int MaxSlots => Flash.Call<int>("InventorySlots", new string[0]);
+        public List<InventoryItem> Items => flash.Call<List<InventoryItem>>("GetInventoryItems", new string[0]);
 
-        public int UsedSlots => Flash.Call<int>("UsedInventorySlots", new string[0]);
+        public int MaxSlots => flash.Call<int>("InventorySlots", new string[0]);
+
+        public int UsedSlots => flash.Call<int>("UsedInventorySlots", new string[0]);
 
         public int AvailableSlots => MaxSlots - UsedSlots;
 

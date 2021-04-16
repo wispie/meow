@@ -14,11 +14,13 @@ namespace Grimoire.Botting.Commands.Item
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Transaction;
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.LoadShop));
-            Shop.ResetShopInfo();
-            Shop.Load(ShopId);
-            await instance.WaitUntil(() => Shop.IsShopLoaded);
+            BotData botData = instance.botData;
+            Shop shop = instance.shop;
+            botData.BotState = BotData.State.Transaction;
+            await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.LoadShop));
+            shop.ResetShopInfo();
+            shop.Load(ShopId);
+            await instance.WaitUntil(() => shop.IsShopLoaded);
         }
 
         public override string ToString()

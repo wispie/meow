@@ -22,21 +22,24 @@ namespace Grimoire.Botting.Commands.Item
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Transaction;
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.BuyItem));
-            Shop.ResetShopInfo();
-            Shop.Load(ShopId);
-            await instance.WaitUntil(() => Shop.IsShopLoaded);
-            InventoryItem i = Player.Inventory.Items.FirstOrDefault((InventoryItem item) => item.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase));
+            BotData botData = instance.botData;
+            Shop shop = instance.shop;
+            Player player = instance.player;
+            botData.BotState = BotData.State.Transaction;
+            await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.BuyItem));
+            shop.ResetShopInfo();
+            shop.Load(ShopId);
+            await instance.WaitUntil(() => shop.IsShopLoaded);
+            InventoryItem i = instance.player.Inventory.Items.FirstOrDefault((InventoryItem item) => item.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase));
             if (i != null)
             {
-                Shop.BuyItem(ItemName);
-                await instance.WaitUntil(() => Player.Inventory.Items.FirstOrDefault((InventoryItem it) => it.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase)).Quantity != i.Quantity);
+                shop.BuyItem(ItemName);
+                await instance.WaitUntil(() => player.Inventory.Items.FirstOrDefault((InventoryItem it) => it.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase)).Quantity != i.Quantity);
             }
             else
             {
-                Shop.BuyItem(ItemName);
-                await instance.WaitUntil(() => Player.Inventory.Items.FirstOrDefault((InventoryItem it) => it.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase)) != null);
+                shop.BuyItem(ItemName);
+                await instance.WaitUntil(() => player.Inventory.Items.FirstOrDefault((InventoryItem it) => it.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase)) != null);
             }
         }
 

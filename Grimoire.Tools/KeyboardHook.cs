@@ -21,11 +21,6 @@ namespace Grimoire.Tools
 
         private readonly int _hookId;
 
-        public static KeyboardHook Instance
-        {
-            get;
-        } = new KeyboardHook();
-
         public event Action<Keys> KeyDown;
 
         [DllImport("user32", CallingConvention = CallingConvention.StdCall)]
@@ -37,7 +32,7 @@ namespace Grimoire.Tools
         [DllImport("user32", CallingConvention = CallingConvention.StdCall)]
         private static extern int CallNextHookEx(int idHook, int nCode, int wParam, int lParam);
 
-        private KeyboardHook()
+        public KeyboardHook()
         {
             hookCallback = HookProc;
             _hookId = SetWindowsHookEx(13, hookCallback, 0, 0);

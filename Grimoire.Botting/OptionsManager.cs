@@ -11,27 +11,43 @@ using System.Windows.Forms;
 
 namespace Grimoire.Botting
 {
-    public static class OptionsManager
+    
+
+    public class OptionsManager
     {
-        private static bool _isRunning;
+        private Flash flash;
+        private Proxy proxy;
+        private Player player;
+        private BotData botData;
+        private Bot bot;
+        public OptionsManager(Player newPlayer, Flash newFlash, Proxy newProxy, BotData newBotData, Bot newBot)
+        {
+            bot = newBot;
+            flash = newFlash;
+            player = newPlayer;
+            botData = newBotData;
+            proxy = newProxy;
+        }
 
-        private static bool _disableAnimations;
+        private bool _isRunning;
 
-        private static bool _hidePlayers;
+        private bool _disableAnimations;
 
-        private static bool _infRange;
+        private bool _hidePlayers;
 
-        private static bool _hideYulgar;
+        private bool _infRange;
 
-        private static bool _hideRoom;
+        private bool _hideYulgar;
 
-        private static bool _afk;
+        private bool _hideRoom;
 
-        private static bool _afk2;
+        private bool _afk;
 
-        private static bool _infMana;
+        private bool _afk2;
 
-        public static bool InfMana
+        private bool _infMana;
+
+        public bool InfMana
         {
             get => _infMana;
             set
@@ -40,7 +56,7 @@ namespace Grimoire.Botting
             }
         }
 
-        public static bool IsRunning
+        public bool IsRunning
         {
             get
             {
@@ -53,50 +69,50 @@ namespace Grimoire.Botting
             }
         }
 
-        public static bool Buff
+        public bool Buff
         {
             get;
             set;
         }
 
-        public static bool ProvokeMonsters
+        public bool ProvokeMonsters
         {
             get;
             set;
         }
 
-        public static bool EnemyMagnet
+        public bool EnemyMagnet
         {
             get;
             set;
         }
 
-        public static bool LagKiller
+        public bool LagKiller
         {
             get;
             set;
         }
 
-        public static bool SkipCutscenes
+        public bool SkipCutscenes
         {
             get;
             set;
         }
         
-        public static bool DisableAnimations
+        public bool DisableAnimations
         {
             get => _disableAnimations;
             set
             {
                 _disableAnimations = value;
                 if (value)
-                    Proxy.Instance.RegisterHandler(HandlerDisableAnimations);
+                    proxy.RegisterHandler(HandlerDisableAnimations);
                 else
-                    Proxy.Instance.UnregisterHandler(HandlerDisableAnimations);
+                    proxy.UnregisterHandler(HandlerDisableAnimations);
             }
         }
 
-        public static bool HidePlayers
+        public bool HidePlayers
         {
             get => _hidePlayers;
             set
@@ -104,17 +120,17 @@ namespace Grimoire.Botting
                 _hidePlayers = value;
                 if (value)
                 {
-                    Proxy.Instance.RegisterHandler(HandlerHidePlayers);
+                    proxy.RegisterHandler(HandlerHidePlayers);
                     DestroyPlayers();
                 }
                 else
                 {
-                    Proxy.Instance.UnregisterHandler(HandlerHidePlayers);
+                    proxy.UnregisterHandler(HandlerHidePlayers);
                 }
             }
         }
         
-        public static bool InfiniteRange
+        public bool InfiniteRange
         {
             get => _infRange;
             set
@@ -127,118 +143,101 @@ namespace Grimoire.Botting
             }
         }
 
-        public static int WalkSpeed
+        public int WalkSpeed
         {
             get;
             set;
         }
 
-        public static int Timer
+        public int Timer
         {
             get;
             set;
         } = 250;
 
-        public static bool Packet
+        public bool Packet
         {
             get;
             set;
         }
 
-        public static bool Untarget
+        public bool Untarget
         {
             get;
             set;
         }
 
-        public static bool AFK
+        public bool AFK
         {
             get => _afk;
             set
             {
                 _afk = value;
                 if (value)
-                    Proxy.Instance.RegisterHandler(HandlerAFK1);
+                    proxy.RegisterHandler(HandlerAFK1);
                 else
-                    Proxy.Instance.UnregisterHandler(HandlerAFK1);
+                    proxy.UnregisterHandler(HandlerAFK1);
             }
         }
 
-        public static bool AFK2
+        public bool AFK2
         {
             get => _afk2;
             set
             {
                 _afk2 = value;
                 if (value)
-                    Proxy.Instance.RegisterHandler(HandlerAFK2);
+                    proxy.RegisterHandler(HandlerAFK2);
                 else
-                    Proxy.Instance.UnregisterHandler(HandlerAFK2);
+                    proxy.UnregisterHandler(HandlerAFK2);
 
             }
         }
 
-        public static bool HideRoom
+        public bool HideRoom
         {
             get => _hideRoom;
             set
             {
                 _hideRoom = value;
                 if (value)
-                    Proxy.Instance.RegisterHandler(HandlerHideRoom);
+                    proxy.RegisterHandler(HandlerHideRoom);
                 else
-                    Proxy.Instance.UnregisterHandler(HandlerHideRoom);
+                    proxy.UnregisterHandler(HandlerHideRoom);
             }
         }
 
-        public static bool ChangeChat
+        public bool ChangeChat
         {
             get;
             set;
         }
 
-        public static int? SetLevelOnJoin
+        public int? SetLevelOnJoin
         {
             get;
             set;
         }
 
-        public static bool HideYulgar
-        {
-            get => _hideYulgar;
-            set
-            {
-                _hideYulgar = value;
-                if (value)
-                {
-                    Proxy.Instance.RegisterHandler(HandlerYulgar);
-                    if((Player.Map.ToLower() ?? "") == "yulgar" && (Player.Cell.ToLower() ?? "") == "upstairs")
-                        DestroyPlayers();
-                }
-                else
-                    Proxy.Instance.UnregisterHandler(HandlerYulgar);
-            }
-        }
+        private readonly string[] empty = new string[0];
 
-        private static readonly string[] empty = new string[0];
+        public event Action<bool> StateChanged;
 
-        public static event Action<bool> StateChanged;
+        private void SetInfiniteRange() => flash.Call("SetInfiniteRange", empty);
 
-        private static void SetInfiniteRange() => Flash.Call("SetInfiniteRange", empty);
+        private void SetProvokeMonsters() => flash.Call("SetProvokeMonsters", empty);
 
-        private static void SetProvokeMonsters() => Flash.Call("SetProvokeMonsters", empty);
+        private void SetEnemyMagnet() => flash.Call("SetEnemyMagnet", empty);
 
-        private static void SetEnemyMagnet() => Flash.Call("SetEnemyMagnet", empty);
+        private void SetLagKiller() => flash.Call("SetLagKiller", LagKiller ? bool.TrueString : bool.FalseString);
 
-        private static void SetLagKiller() => Flash.Call("SetLagKiller", LagKiller ? bool.TrueString : bool.FalseString);
+        public void DestroyPlayers() => flash.Call("DestroyPlayers", empty);
 
-        public static void DestroyPlayers() => Flash.Call("DestroyPlayers", empty);
+        private void SetSkipCutscenes() => flash.Call("SetSkipCutscenes", empty);
 
-        private static void SetSkipCutscenes() => Flash.Call("SetSkipCutscenes", empty);
+        public void SetWalkSpeed() => flash.Call("SetWalkSpeed", WalkSpeed.ToString());
 
-        public static void SetWalkSpeed() => Flash.Call("SetWalkSpeed", WalkSpeed.ToString());
-
-        public static void Start()
+        public void Start()
         {
             if (!IsRunning)
             {
@@ -246,33 +245,33 @@ namespace Grimoire.Botting
             }
         }
 
-        public static void Stop()
+        public void Stop()
         {
             IsRunning = false;
         }
 
-        private static async Task ApplySettings()
+        private async Task ApplySettings()
         {
             IsRunning = true;
-            while (IsRunning && Player.IsLoggedIn)
+            while (IsRunning && player.IsLoggedIn)
             {
-                bool flagprovoke = ProvokeMonsters && Player.IsAlive && BotData.BotState != BotData.State.Move && BotData.BotState != BotData.State.Rest && BotData.BotState != BotData.State.Transaction;
+                bool flagprovoke = ProvokeMonsters && player.IsAlive && botData.BotState != BotData.State.Move && botData.BotState != BotData.State.Rest && botData.BotState != BotData.State.Transaction;
                 if (flagprovoke)
                 {
-                    if (BotData.BotState == BotData.State.Quest)
+                    if (botData.BotState == BotData.State.Quest)
                     {
                         await Task.Delay(1500);
                         SetProvokeMonsters();
-                        BotData.BotState = BotData.State.Combat;
+                        botData.BotState = BotData.State.Combat;
                     }
                     SetProvokeMonsters();
                 }
-                if (EnemyMagnet && Player.IsAlive)
+                if (EnemyMagnet && player.IsAlive)
                     SetEnemyMagnet();
                 if (Untarget)
-                    Player.CancelTargetSelf();
+                    player.CancelTargetSelf();
                 if (Buff)
-                    Player.SetBuff();
+                    player.SetBuff();
                 if (SkipCutscenes)
                     SetSkipCutscenes();
                 SetWalkSpeed();
@@ -281,49 +280,47 @@ namespace Grimoire.Botting
             }
         }
         
-        private static IJsonMessageHandler HandlerDisableAnimations
+        private IJsonMessageHandler HandlerDisableAnimations
         {
             get;
         }
 
-        private static IXtMessageHandler HandlerHidePlayers
+        private IXtMessageHandler HandlerHidePlayers
         {
             get;
         }
 
-        private static IXtMessageHandler HandlerYulgar
+        private IXtMessageHandler HandlerYulgar
         {
             get;
         }
 
-        private static IJsonMessageHandler HandlerHideRoom
+        private IJsonMessageHandler HandlerHideRoom
         {
             get;
         }
 
-        private static IJsonMessageHandler HandlerRange
+        private IJsonMessageHandler HandlerRange
         {
             get;
         }
         
-        private static IXtMessageHandler HandlerAFK1
+        private IXtMessageHandler HandlerAFK1
         {
             get;
         }
         
-        private static IXtMessageHandler HandlerAFK2
+        private IXtMessageHandler HandlerAFK2
         {
             get;
         }
 
-        static OptionsManager()
+        public OptionsManager()
         {
             HandlerDisableAnimations = new HandlerAnimations();
-            HandlerHidePlayers = new HandlerPlayers();
-            HandlerRange = new HandlerSkills();
+            HandlerHidePlayers = new HandlerPlayers(this, player);
             HandlerYulgar = new HandlerXtCellJoin();
-            HandlerHideRoom = new HandlerMapJoin();
-            HandlerAFK1 = new HandlerAFK();
+            HandlerAFK1 = new HandlerAFK(bot, player);
             HandlerAFK2 = new HandlerAFK2();
             WalkSpeed = 8;
         }

@@ -13,7 +13,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (Player.Level != int.Parse(Value1))
+            if (instance.player.Level != int.Parse(Value1))
             {
                 instance.Index++;
             }

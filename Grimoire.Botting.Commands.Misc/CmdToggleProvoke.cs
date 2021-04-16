@@ -12,7 +12,7 @@ namespace Grimoire.Botting.Commands.Misc
 
         public async Task Execute(IBotEngine instance)
         {
-            bool on = OptionsManager.ProvokeMonsters;
+            bool on = instance.optionsManager.ProvokeMonsters;
             switch (Type)
             {
                 case 0:
@@ -25,7 +25,7 @@ namespace Grimoire.Botting.Commands.Misc
                     on = !on;
                     break;
             }
-            OptionsManager.ProvokeMonsters = on;
+            instance.optionsManager.ProvokeMonsters = on;
         }
 
         public override string ToString()

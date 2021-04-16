@@ -27,55 +27,61 @@ namespace Grimoire.Botting.Commands.Combat
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Combat;
-            if (BotData.BotCell != null && !Player.Cell.Equals(BotData.BotCell, StringComparison.OrdinalIgnoreCase))
+            BotData botData = instance.botData;
+            Player player = instance.player;
+            World world = instance.world;
+            botData.BotState = BotData.State.Combat;
+            if (botData.BotCell != null && !player.Cell.Equals(botData.BotCell, StringComparison.OrdinalIgnoreCase))
             {
-                Player.MoveToCell(BotData.BotCell, BotData.BotPad);
+                instance.player.MoveToCell(botData.BotCell, botData.BotPad);
                 await Task.Delay(1000);
             }
-            await instance.WaitUntil(() => World.IsMonsterAvailable(Monster), null, 3);
+            await instance.WaitUntil(() => world.IsMonsterAvailable(Monster), null, 3);
             if (instance.Configuration.WaitForAllSkills)
             {
-                await Task.Delay(Player.AllSkillsAvailable);
+                await Task.Delay(instance.player.AllSkillsAvailable);
             }
-            if (instance.IsRunning && Player.IsAlive && Player.IsLoggedIn)
+            if (instance.IsRunning && instance.player.IsAlive && instance.player.IsLoggedIn)
             {
-                Player.AttackMonster(Monster);
+                instance.player.AttackMonster(Monster);
                 await Task.Delay(500);
                 Task.Run(() => UseSkills(instance));
-                await instance.WaitUntil(() => !Player.HasTarget, null, 360);
+                await instance.WaitUntil(() => !player.HasTarget, null, 360);
                 _cts?.Cancel(throwOnFirstException: false);
             }
         }
 
         private async Task UseSkills(IBotEngine instance)
         {
+            BotData botData = instance.botData;
+            Player player = instance.player;
+            World world = instance.world;
             _cts = new CancellationTokenSource();
             int ClassIndex = -1;
-            if (BotData.SkillSet != null && BotData.SkillSet.ContainsKey("[" + BotData.BotSkill + "]"))
+            if (botData.SkillSet != null && botData.SkillSet.ContainsKey("[" + botData.BotSkill + "]"))
             {
-                ClassIndex = BotData.SkillSet["[" + BotData.BotSkill + "]"] + 1;
+                ClassIndex = botData.SkillSet["[" + botData.BotSkill + "]"] + 1;
             }
             int Count = instance.Configuration.Skills.Count - 1;
             Index = ClassIndex;
             while (!_cts.IsCancellationRequested)
             {
-                if (!Player.IsLoggedIn || !Player.IsAlive)
+                if (!instance.player.IsLoggedIn || !instance.player.IsAlive)
                 {
-                    while (Player.HasTarget)
+                    while (instance.player.HasTarget)
                     {
-                        Player.CancelTarget();
+                        instance.player.CancelTarget();
                         await Task.Delay(500);
                     }
                     return;
                 }
-                if (Monster.ToLower() == "escherion" && World.IsMonsterAvailable("Staff of Inversion"))
+                if (Monster.ToLower() == "escherion" && world.IsMonsterAvailable("Staff of Inversion"))
                 {
-                    Player.AttackMonster("Staff of Inversion");
+                    instance.player.AttackMonster("Staff of Inversion");
                 }
-                else if (Monster.ToLower() == "vath" && World.IsMonsterAvailable("Stalagbite"))
+                else if (Monster.ToLower() == "vath" && world.IsMonsterAvailable("Stalagbite"))
                 {
-                    Player.AttackMonster("Stalagbite");
+                    instance.player.AttackMonster("Stalagbite");
                 }
                 if (ClassIndex != -1)
                 {
@@ -87,26 +93,26 @@ namespace Grimoire.Botting.Commands.Combat
                     }
                     if (instance.Configuration.WaitForSkill)
                     {
-                        BotManager.Instance.OnSkillIndexChanged(Index);
-                        await Task.Delay(Player.SkillAvailable(s.Index));
+                        instance.botManager.OnSkillIndexChanged(Index);
+                        await Task.Delay(instance.player.SkillAvailable(s.Index));
                     }
                     if (s.Type == Skill.SkillType.Safe)
                     {
                         if (s.SafeMp)
                         {
-                            if (Player.Mana / (double)Player.ManaMax * 100.0 <= s.SafeHealth)
+                            if (instance.player.Mana / (double)instance.player.ManaMax * 100.0 <= s.SafeHealth)
                             {
-                                Player.UseSkill(s.Index);
+                                instance.player.UseSkill(s.Index);
                             }
                         }
-                        else if (Player.Health / (double)Player.HealthMax * 100.0 <= s.SafeHealth)
+                        else if (instance.player.Health / (double)instance.player.HealthMax * 100.0 <= s.SafeHealth)
                         {
-                            Player.UseSkill(s.Index);
+                            instance.player.UseSkill(s.Index);
                         }
                     }
                     else
                     {
-                        Player.UseSkill(s.Index);
+                        instance.player.UseSkill(s.Index);
                     }
                     int num = Index = (Index >= Count) ? ClassIndex : (++Index);
                 }
@@ -114,10 +120,10 @@ namespace Grimoire.Botting.Commands.Combat
                 {
                     int[] array = new int[4]
                     {
-                        Player.SkillAvailable("1"),
-                        Player.SkillAvailable("2"),
-                        Player.SkillAvailable("3"),
-                        Player.SkillAvailable("4")
+                        instance.player.SkillAvailable("1"),
+                        instance.player.SkillAvailable("2"),
+                        instance.player.SkillAvailable("3"),
+                        instance.player.SkillAvailable("4")
                     };
                     int num2 = array[0];
                     int MinIndex = 1;
@@ -130,13 +136,13 @@ namespace Grimoire.Botting.Commands.Combat
                         }
                     }
                     await Task.Delay(num2);
-                    Player.UseSkill(MinIndex.ToString());
+                    instance.player.UseSkill(MinIndex.ToString());
                 }
                 await Task.Delay(instance.Configuration.SkillDelay);
             }
-            while (Player.HasTarget)
+            while (instance.player.HasTarget)
             {
-                Player.CancelTarget();
+                instance.player.CancelTarget();
                 await Task.Delay(500);
             }
         }

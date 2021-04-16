@@ -13,7 +13,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (!World.IsMonsterAvailable(Value1))
+            if (!instance.world.IsMonsterAvailable(Value1))
             {
                 instance.Index++;
             }

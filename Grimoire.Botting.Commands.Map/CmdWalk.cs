@@ -26,18 +26,20 @@ namespace Grimoire.Botting.Commands.Map
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Others;
+            BotData botData = instance.botData;
+            Player player = instance.player;
+            botData.BotState = BotData.State.Others;
             if (Type == "Random")
             {
-                Player.WalkToPoint(y: new Random().Next(320, 450).ToString(), x: new Random().Next(150, 700).ToString());
+                player.WalkToPoint(y: new Random().Next(320, 450).ToString(), x: new Random().Next(150, 700).ToString());
                 await Task.Delay(1000);
             }
             else
             {
-                Player.WalkToPoint(X, Y);
+                player.WalkToPoint(X, Y);
                 await instance.WaitUntil(delegate
                 {
-                    float[] position = Player.Position;
+                    float[] position = player.Position;
                     return position[0].ToString() == X && position[1].ToString() == Y;
                 });
             }

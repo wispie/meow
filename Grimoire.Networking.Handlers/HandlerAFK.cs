@@ -15,10 +15,18 @@ namespace Grimoire.Networking.Handlers
             "afk"
         };
 
+        private Player player;
+        private Bot bot;
+        public HandlerAFK(Bot newBot, Player newPlayer)
+        {
+            bot = newBot;
+            player = newPlayer;
+        }
+
         public void Handle(XtMessage message)
         {
-            if (message.Arguments[5] == "true" && Bot.Instance.IsRunning)
-                Player.Logout();
+            if (message.Arguments[5] == "true" && bot.IsRunning)
+                player.Logout();
         }
     }
 

@@ -18,22 +18,28 @@ namespace Grimoire.Networking.Handlers
             "moveToArea"
         };
 
+        private OptionsManager optionsManager;
+        public HandlerMapJoin(OptionsManager newOptions)
+        {
+            optionsManager = newOptions;
+        }
+
         public void Handle(JsonMessage message)
         {
-            if (OptionsManager.HideRoom)
+            if (optionsManager.HideRoom)
                 message.DataObject["areaName"] = "discord.gg/aqwbots";
             //JToken jToken = message.DataObject["uoBranch"];
-            //if (OptionsManager.SetLevelOnJoin != null && jToken.Type != JTokenType.Null)
+            //if (optionsManager.SetLevelOnJoin != null && jToken.Type != JTokenType.Null)
             //{
             //    int i = 0;
             //    foreach(JToken j in jToken)
             //    {
             //        MessageBox.Show(j.ToString());
-            //        //if (j["uoName"].ToString() == Player.Username.ToLower())
-            //        //    j["intLevel"] = OptionsManager.SetLevelOnJoin;
+            //        //if (j["uoName"].ToString() == player.Username.ToLower())
+            //        //    j["intLevel"] = optionsManager.SetLevelOnJoin;
             //    }
             //}
-            //MessageBox.Show(BotManager.Instance.CustomName + " 1 \r\n" + message.RawContent.Split(':')[6].Split('-')[0].Replace("\"", "").ToLower());
+            //MessageBox.Show(botManager.CustomName + " 1 \r\n" + message.RawContent.Split(':')[6].Split('-')[0].Replace("\"", "").ToLower());
         }
     }
 }

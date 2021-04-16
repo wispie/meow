@@ -22,18 +22,25 @@ namespace Grimoire.Tools
 
     public class Flash
     {
-        private static Flash _instance;
-        public static Flash Instance => _instance ?? (_instance = new Flash());
+        private Root root;
+        private BotManager botManager;
+        private Proxy proxy;
+        public Flash(Root newRoot, BotManager newBotManager, Proxy newProxy)
+        {
+            root = newRoot;
+            proxy = newProxy;
+            botManager = newBotManager;
+        }
 
-        public static AxShockwaveFlash flash;
+        //public AxShockwaveFlash flash;
 
-        public static event FlashCallHandler FlashCall;
+        public event FlashCallHandler FlashCall;
 
-        public static event FlashErrorHandler FlashError;
+        public event FlashErrorHandler FlashError;
 
-        public static event Action<int> SwfLoadProgress;
+        public event Action<int> SwfLoadProgress;
 
-        public static void ProcessFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+        public void ProcessFlashCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
         {
             XElement xElement = XElement.Parse(e.request);
             string text = xElement.Attribute("name")?.Value;
@@ -46,7 +53,7 @@ namespace Grimoire.Tools
             {
                 if (text == "modifyServers")
                 {
-                    Root.Instance.Client.SetReturnValue("<string>" + ModifyServerList(text2.Trim()) + "</string>");
+                    root.Client.SetReturnValue("<string>" + ModifyServerList(text2.Trim()) + "</string>");
                 }
             }
             else
@@ -87,12 +94,12 @@ namespace Grimoire.Tools
             Call("setGameObject", path, value);
         }
         
-        public static string Call(string function, params object[] args)
+        public string Call(string function, params object[] args)
         {
             return Call<string>(function, args);
         }
 
-        public static T Call<T>(string function, params object[] args)
+        public T Call<T>(string function, params object[] args)
         {
             try
             {
@@ -104,7 +111,7 @@ namespace Grimoire.Tools
             }
         }
 
-        public static object Call(string function, Type type, params object[] args)
+        public object Call(string function, Type type, params object[] args)
         {
             try
             {
@@ -116,28 +123,28 @@ namespace Grimoire.Tools
                     req.Append("</arguments>");
                 }
                 req.Append("</invoke>");
-                string result = flash.CallFunction(req.ToString());
+                string result = root.Client.CallFunction(req.ToString());
                 XElement el = XElement.Parse(result);
                 return el == null || el.FirstNode == null ? default : Convert.ChangeType(el.FirstNode.ToString(), type);
             }
             catch (Exception e)
             {
-                FlashError?.Invoke(flash, e, function, args);
+                FlashError?.Invoke(root.Client, e, function, args);
                 return default;
             }
         }
 
-        public static T Call<T>(string function, params string[] args)
+        public T Call<T>(string function, params string[] args)
         {
             return TryDeserialize<T>(GetResponse(BuildRequest(function, args)));
         }
         
-        public static void Call(string function, params string[] args)
+        public void Call(string function, params string[] args)
         {
             Call<string>(function, args);
         }
 
-        private static string BuildRequest(string method, params string[] args)
+        private string BuildRequest(string method, params string[] args)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("<invoke name=\"" + method + "\" returntype=\"xml\">");
@@ -154,11 +161,11 @@ namespace Grimoire.Tools
             return stringBuilder.ToString();
         }
 
-        private static string GetResponse(string request)
+        private string GetResponse(string request)
         {
             try
             {
-                return HttpUtility.HtmlDecode(XElement.Parse(Root.Instance.Client.CallFunction(request)).FirstNode?.ToString() ?? string.Empty);
+                return HttpUtility.HtmlDecode(XElement.Parse(root.Client.CallFunction(request)).FirstNode?.ToString() ?? string.Empty);
             }
             catch
             {
@@ -166,7 +173,7 @@ namespace Grimoire.Tools
             }
         }
 
-        private static T TryDeserialize<T>(string str)
+        private T TryDeserialize<T>(string str)
         {
             try
             {
@@ -178,7 +185,7 @@ namespace Grimoire.Tools
             }
         }
 
-        public static string ToFlashXml(object o)
+        public string ToFlashXml(object o)
         {
             switch (o)
             {
@@ -213,7 +220,7 @@ namespace Grimoire.Tools
             }
         }
 
-        private static string ModifyServerList(string xml)
+        private string ModifyServerList(string xml)
         {
             if (!xml.StartsWith("<login") || !xml.EndsWith("</login>"))
             {
@@ -234,7 +241,7 @@ namespace Grimoire.Tools
                 XmlAttribute xmlAttribute2 = xmlElement2.Attributes["iPort"];
                 xmlElement2.Attributes.Append(xmlDocument.CreateAttribute("RealAddress")).Value = xmlAttribute.Value;
                 xmlElement2.Attributes.Append(xmlDocument.CreateAttribute("RealPort")).Value = xmlAttribute2.Value;
-                xmlElement2.Attributes["iPort"].Value = Proxy.Instance.ListenerPort.ToString();
+                xmlElement2.Attributes["iPort"].Value = proxy.ListenerPort.ToString();
                 xmlAttribute.Value = "127.0.0.1";
                 array[i] = new Server
                 {
@@ -246,11 +253,11 @@ namespace Grimoire.Tools
                     Port = int.Parse(xmlElement2.Attributes["iPort"].Value)
                 };
             }
-            BotManager.Instance.OnServersLoaded(array);
+            botManager.OnServersLoaded(array);
             return xmlDocument.OuterXml;
         }
 
-        public static object FromFlashXml(XElement el)
+        public object FromFlashXml(XElement el)
         {
             switch (el.Name.ToString())
             {
@@ -273,12 +280,12 @@ namespace Grimoire.Tools
             }
         }
 
-        public static void CallHandler(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+        public void CallHandler(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
         {
             XElement el = XElement.Parse(e.request);
             string name = el.Attribute("name").Value;
             object[] args = el.Elements().Select(x => FromFlashXml(x)).ToArray();
-            FlashCall?.Invoke(flash, name, args);
+            FlashCall?.Invoke(root.Client, name, args);
         }
     }
 }

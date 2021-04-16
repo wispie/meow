@@ -17,16 +17,24 @@ namespace Grimoire.Networking.Handlers
             "loginResponse"
         };
 
+        private Configuration configuration;
+        private LogForm logForm;
+        public HandlerLogin(Configuration newConfig, LogForm newLogForm)
+        {
+            configuration = newConfig;
+            logForm = newLogForm;
+        }
+
         public void Handle(XtMessage message)
         {
             //foreach (string n in Configuration.BlockedPlayers)
             //{
-            //    if (Player.Username.ToLower() == n)
+            //    if (instance.player.Username.ToLower() == n)
             //    {
             //        Environment.Exit(0);
             //    }
             //}
-            LogForm.Instance.AppendDebug($"Relogin to server: {Configuration.Instance.Server.Name} at {DateTime.Now:hh:mm:ss tt} \r\n");
+            logForm.AppendDebug($"Relogin to server: {configuration.Server.Name} at {DateTime.Now:hh:mm:ss tt} \r\n");
         }
     }
 }

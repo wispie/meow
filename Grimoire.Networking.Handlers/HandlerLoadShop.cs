@@ -14,12 +14,18 @@ namespace Grimoire.Networking.Handlers
             "loadShop"
         };
 
+        private World world;
+        public HandlerLoadShop(World newWorld)
+        {
+            world = newWorld;
+        }
+
         public void Handle(JsonMessage message)
         {
             JToken jToken = message.DataObject["shopinfo"];
             if (jToken != null)
             {
-                World.OnShopLoaded(jToken.ToObject<ShopInfo>());
+                world.OnShopLoaded(jToken.ToObject<ShopInfo>());
             }
         }
     }

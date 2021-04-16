@@ -15,7 +15,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (World.PlayersInMap.FirstOrDefault((string p) => p.Equals(Value1, StringComparison.OrdinalIgnoreCase)) != null)
+            if (instance.world.PlayersInMap.FirstOrDefault((string p) => p.Equals(Value1, StringComparison.OrdinalIgnoreCase)) != null)
             {
                 instance.Index++;
             }

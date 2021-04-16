@@ -8,19 +8,19 @@ namespace Grimoire.Botting.Commands.Map
     {
         public async Task Execute(IBotEngine instance)
         {
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.Transfer));
-            if (Player.CurrentState == Player.State.InCombat)
+            await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.Transfer));
+            if (instance.player.CurrentState == Player.State.InCombat)
             {
-                Player.MoveToCell(Player.Cell, Player.Pad);
+                instance.player.MoveToCell(instance.player.Cell, instance.player.Pad);
                 await Task.Delay(1250);
             }
-            if (!Player.Map.Equals("yulgar", StringComparison.OrdinalIgnoreCase))
+            if (!instance.player.Map.Equals("yulgar", StringComparison.OrdinalIgnoreCase))
             {
-                Player.JoinMap("yulgar", "Enter", "Spawn");
-                await instance.WaitUntil(() => Player.Map.Equals("yulgar", StringComparison.OrdinalIgnoreCase));
-                await instance.WaitUntil(() => !World.IsMapLoading, null, 40);
+                instance.player.JoinMap("yulgar", "Enter", "Spawn");
+                await instance.WaitUntil(() => instance.player.Map.Equals("yulgar", StringComparison.OrdinalIgnoreCase));
+                await instance.WaitUntil(() => !instance.world.IsMapLoading, null, 40);
             }
-            Player.WalkToPoint(y: new Random().Next(320, 450).ToString(), x: new Random().Next(150, 700).ToString());
+            instance.player.WalkToPoint(y: new Random().Next(320, 450).ToString(), x: new Random().Next(150, 700).ToString());
             instance.Stop();
         }
 

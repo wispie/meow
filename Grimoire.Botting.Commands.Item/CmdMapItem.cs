@@ -13,9 +13,12 @@ namespace Grimoire.Botting.Commands.Item
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Others;
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.GetMapItem));
-            Player.GetMapItem(ItemId);
+            BotData botData = instance.botData;
+            World world = instance.world;
+            Player player = instance.player;
+            botData.BotState = BotData.State.Others;
+            await instance.WaitUntil(() => world.IsActionAvailable(LockActions.GetMapItem));
+            player.GetMapItem(ItemId);
             await Task.Delay(2000);
         }
 

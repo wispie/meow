@@ -16,21 +16,24 @@ namespace Grimoire.Networking.Handlers
         {
             "server"
         };
+        private OptionsManager optionsManager;
+        private LogForm logForm;
+        public HandlerXtJoin(OptionsManager newOptions, LogForm newLogForm)
+        {
+            optionsManager = newOptions;
+            logForm = newLogForm;
+        }
 
         public void Handle(XtMessage message)
         {
             if (!message.RawContent.Contains("You joined "))
                 return;
-            if (BotManager.Instance.CustomName != null)
-                BotManager.Instance.CustomName = BotManager.Instance.CustomName;
-            if (BotManager.Instance.CustomGuild != null)
-                BotManager.Instance.CustomGuild = BotManager.Instance.CustomGuild;
-            if (OptionsManager.HideRoom)
+            if (optionsManager.HideRoom)
             {
                 Config c = Config.Load(Application.StartupPath + "\\config.cfg");
                 message.Arguments[4] =  c.Get("JoinMessage") ?? "You joined a place but... where?";
             }
-            LogForm.Instance.AppendChat(string.Format("[{0:hh:mm:ss}] {1} \r\n", DateTime.Now, message.Arguments[4]));
+            logForm.AppendChat(string.Format("[{0:hh:mm:ss}] {1} \r\n", DateTime.Now, message.Arguments[4]));
         }
     }
 
@@ -46,8 +49,8 @@ namespace Grimoire.Networking.Handlers
 
         public void Handle(XtMessage message)
         {
-            if (Player.Map.ToLower() == "yulgar" && Player.Cell.ToLower() == "upstairs" && OptionsManager.HideYulgar)
-                OptionsManager.DestroyPlayers();
+            //if (message.player.Map.ToLower() == "yulgar" && message.player.Cell.ToLower() == "upstairs" && message.optionsManager.HideYulgar)
+            //  message.optionsManager.DestroyPlayers();
         }
     }
 }

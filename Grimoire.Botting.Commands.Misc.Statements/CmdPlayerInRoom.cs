@@ -18,14 +18,14 @@ namespace Grimoire.Botting.Commands.Misc.Statements
             string PlayerName = "";
             if ( IsVar(Value1) )
             {
-                PlayerName = Configuration.Tempvariable[GetVar(Value1)];
+                PlayerName = instance.Configuration.Tempvariable[GetVar(Value1)];
             }
             else
             {
                 PlayerName = Value1;
             }
 
-            if (World.PlayersInMap.FirstOrDefault((string p) => p.Equals(PlayerName, StringComparison.OrdinalIgnoreCase)) == null)
+            if (instance.world.PlayersInMap.FirstOrDefault((string p) => p.Equals(PlayerName, StringComparison.OrdinalIgnoreCase)) == null)
             {
                 instance.Index++;
             }

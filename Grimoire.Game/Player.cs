@@ -9,8 +9,14 @@ using System.Windows.Forms;
 
 namespace Grimoire.Game
 {
-    public static class Player
+    public class Player
     {
+        private Flash flash;
+        public Player(Flash newFlash)
+        {
+            flash = newFlash;
+        }
+
         public enum State
         {
             Dead,
@@ -18,24 +24,24 @@ namespace Grimoire.Game
             InCombat
         }
 
-        public static int UserID => Flash.Call<int>("UserID", new object[0]);
+        public int UserID => flash.Call<int>("UserID", new object[0]);
 
-        public static Bank Bank
+        public Bank Bank
         {
             get;
         }
 
-        public static Inventory Inventory
+        public Inventory Inventory
         {
             get;
         }
 
-        public static TempInventory TempInventory
+        public TempInventory TempInventory
         {
             get;
         }
 
-        public static House House
+        public House House
         {
             get;
         }
@@ -43,14 +49,14 @@ namespace Grimoire.Game
         /// <summary>
         /// Gets an array containing all the names of the factions that the player has some reputation in.
         /// </summary>
-        public static List<Faction> Factions => JsonConvert.DeserializeObject<List<Faction>>(Flash.Call("GetFactions", new object[0]));
+        public List<Faction> Factions => JsonConvert.DeserializeObject<List<Faction>>(flash.Call("GetFactions", new object[0]));
 
-        public static Quests Quests
+        public Quests Quests
         {
             get;
         }
 
-        public static CmdTravel CreateJoinCommand(string map, string cell = "Enter", string pad = "Spawn")
+        public CmdTravel CreateJoinCommand(string map, string cell = "Enter", string pad = "Spawn")
         {
             return new CmdTravel
             {
@@ -60,7 +66,7 @@ namespace Grimoire.Game
             };
         }
 
-        public static async void ExecuteTravel(List<IBotCommand> cmds)
+        public async void ExecuteTravel(List<IBotCommand> cmds)
         {
             foreach (IBotCommand cmd in cmds)
             {
@@ -69,17 +75,17 @@ namespace Grimoire.Game
             }
         }
 
-        private static bool usernamecheck = true;
+        private bool usernamecheck = true;
         /// <summary>
         /// Grabs Username string.
         /// </summary>
-        public static string Username
+        public string Username
         {
             get
             {
                 if (!IsLoggedIn)
                     return "";
-                string usr = Flash.Call<string>("GetUsername", new string[0]);
+                string usr = flash.Call<string>("GetUsername", new string[0]);
                 if (usr == "null" && usernamecheck)
                 {
                     MessageBox.Show(
@@ -95,174 +101,174 @@ namespace Grimoire.Game
         /// <summary>
         /// Grabs Password string.
         /// </summary>
-        public static string Password => Flash.Call<string>("GetPassword", new string[0]);
+        public string Password => flash.Call<string>("GetPassword", new string[0]);
 
         /// <summary>
         /// Checks if Logged in.
         /// </summary>
-        public static bool IsLoggedIn => Flash.Call<bool>("IsLoggedIn", new string[0]);
+        public bool IsLoggedIn => flash.Call<bool>("IsLoggedIn", new string[0]);
 
         /// <summary>
         /// Gets Cell.
         /// </summary>
-        public static string Cell => Flash.Call<string>("Cell", new string[0]);
+        public string Cell => flash.Call<string>("Cell", new string[0]);
 
         /// <summary>
         /// Gets Pad.
         /// </summary>
-        public static string Pad => Flash.Call<string>("Pad", new string[0]);
+        public string Pad => flash.Call<string>("Pad", new string[0]);
 
         /// <summary>
         /// Gets Current State (Dead, Idle or InCombat).
         /// </summary>
-        public static State CurrentState => (State)Flash.Call<int>("State", new string[0]);
+        public State CurrentState => (State)flash.Call<int>("State", new string[0]);
 
         /// <summary>
         /// Gets Current Health.
         /// </summary>
-        public static int Health => Flash.Call<int>("Health", new string[0]);
+        public int Health => flash.Call<int>("Health", new string[0]);
 
         /// <summary>
         /// Gets Health max.
         /// </summary>
-        public static int HealthMax => Flash.Call<int>("HealthMax", new string[0]);
+        public int HealthMax => flash.Call<int>("HealthMax", new string[0]);
 
         /// <summary>
         /// Checks if Health is above 0.
         /// </summary>
-        public static bool IsAlive => Health > 0;
+        public bool IsAlive => Health > 0;
 
         /// <summary>
         /// Gets Current Mana.
         /// </summary>
-        public static int Mana => Flash.Call<int>("Mana", new string[0]);
+        public int Mana => flash.Call<int>("Mana", new string[0]);
 
         /// <summary>
         /// Gets Mana max.
         /// </summary>
-        public static int ManaMax => Flash.Call<int>("ManaMax", new string[0]);
+        public int ManaMax => flash.Call<int>("ManaMax", new string[0]);
 
         /// <summary>
         /// Gets map string.
         /// </summary>
-        public static string Map => Flash.Call<string>("Map", new string[0]);
+        public string Map => flash.Call<string>("Map", new string[0]);
 
         /// <summary>
         /// Gets level int.
         /// </summary>
-        public static int Level => Flash.Call<int>("Level", new string[0]);
+        public int Level => flash.Call<int>("Level", new string[0]);
 
         /// <summary>
         /// Gets gold int.
         /// </summary>
-        public static int Gold => Flash.Call<int>("Gold", new string[0]);
+        public int Gold => flash.Call<int>("Gold", new string[0]);
 
         /// <summary>
         /// Checks if the player has a target.
         /// </summary>
-        public static bool HasTarget => Flash.Call<bool>("HasTarget", new string[0]);
+        public bool HasTarget => flash.Call<bool>("HasTarget", new string[0]);
 
         /// <summary>
         /// Checks if all skills are available or off cooldown.
         /// </summary>
-        public static int AllSkillsAvailable => Flash.Call<int>("AllSkillsAvailable", new string[0]);
+        public int AllSkillsAvailable => flash.Call<int>("AllSkillsAvailable", new string[0]);
 
         /// <summary>
         /// Checks if the player is afk.
         /// </summary>
-        public static bool IsAfk => Flash.Call<bool>("IsAfk", new string[0]);
+        public bool IsAfk => flash.Call<bool>("IsAfk", new string[0]);
 
         /// <summary>
         /// Finds player position (float).
         /// </summary>
-        public static float[] Position => Flash.Call<float[]>("Position", new string[0]);
+        public float[] Position => flash.Call<float[]>("Position", new string[0]);
 
         /// <summary>
         /// Checks if the player is a member (upgrade).
         /// </summary>
-        public static bool IsMember => bool.Parse(Flash.Call<string>("IsMember", new string[0]));
-            //Flash.Instance.GetGameObject<int>("world.myAvatar.objData.iUpgDays") >= 0;
+        public bool IsMember => bool.Parse(flash.Call<string>("IsMember", new string[0]));
+            //flash.Instance.GetGameObject<int>("world.myAvatar.objData.iUpgDays") >= 0;
 
         /// <summary>
         /// Checks if int skill is available (i think if its also off cooldown).
         /// </summary>
         /// <param name="index"></param>
-        public static int SkillAvailable(string index) => Flash.Call<int>("SkillAvailable", new string[1]{index});
+        public int SkillAvailable(string index) => flash.Call<int>("SkillAvailable", new string[1]{index});
 
         /// <summary>
         ///  Toggles mute.
         /// </summary>
-        public static void ToggleMute(bool b) => Flash.Call("MuteToggle", b);
+        public void ToggleMute(bool b) => flash.Call("MuteToggle", b);
 
         /// <summary>
         /// Change between AccessLevels (Non Member, Member, Moderator).
         /// </summary>
         /// <param name="level"></param>
-        public static void ChangeAccessLevel(string level) => Flash.Call("ChangeAccessLevel", level);
+        public void ChangeAccessLevel(string level) => flash.Call("ChangeAccessLevel", level);
 
-        public static void WalkToPoint(string x, string y) => Flash.Call("WalkToPoint", x, y);
+        public void WalkToPoint(string x, string y) => flash.Call("WalkToPoint", x, y);
 
         /// <summary>
         /// Cancels Target
         /// </summary>
-        public static void CancelTarget() => Flash.Call("CancelTarget", new string[0]);
+        public void CancelTarget() => flash.Call("CancelTarget", new string[0]);
 
         /// <summary>
         /// Cancels Target on Self
         /// </summary>
-        public static void CancelTargetSelf() => Flash.Call("CancelTargetSelf", new string[0]);
+        public void CancelTargetSelf() => flash.Call("CancelTargetSelf", new string[0]);
 
         /// <summary>
         /// Haste set to 50%, Mana refreshes to 100
         /// </summary>
-        public static void SetBuff() => Flash.Call("Buff", new string[0]);
+        public void SetBuff() => flash.Call("Buff", new string[0]);
 
         /// <summary>
         /// Attacks Monster
         /// </summary>
         /// <param name="name"></param>
-        public static void AttackMonster(string name) => Flash.Call("AttackMonster", name);
+        public void AttackMonster(string name) => flash.Call("AttackMonster", name);
 
         /// <summary>
         /// Sets Respawn Point to Current Cell Pad
         /// </summary>
-        public static void SetSpawnPoint() => Flash.Call("SetSpawnPoint", new string[0]);
+        public void SetSpawnPoint() => flash.Call("SetSpawnPoint", new string[0]);
 
-        public static void MoveToCell(string cell, string pad = "Spawn") => Flash.Call("Jump", cell, pad);
+        public void MoveToCell(string cell, string pad = "Spawn") => flash.Call("Jump", cell, pad);
 
-        public static void Rest() => Flash.Call("Rest", new string[0]);
+        public void Rest() => flash.Call("Rest", new string[0]);
 
-        public static void JoinMap(string map, string cell = "Enter", string pad = "Spawn") => Flash.Call("Join", map, cell, pad);
+        public void JoinMap(string map, string cell = "Enter", string pad = "Spawn") => flash.Call("Join", map, cell, pad);
 
-        public static void Equip(string id) => Flash.Call("Equip", id);
-        public static void Equip(int id) => Flash.Call("Equip", id.ToString());
+        public void Equip(string id) => flash.Call("Equip", id);
+        public void Equip(int id) => flash.Call("Equip", id.ToString());
 
-        public static void EquipPotion(int id, string desc, string file, string name) => Flash.Call("EquipPotion", id.ToString(), desc, file, name);
+        public void EquipPotion(int id, string desc, string file, string name) => flash.Call("EquipPotion", id.ToString(), desc, file, name);
 
-        //public static void GotoPlayer(string name) => Flash.Call("GoTo", name);
-        public static void GoToPlayer(string name) => Flash.Call("GoTo", name);
+        //public void GotoPlayer(string name) => flash.Call("GoTo", name);
+        public void GoToPlayer(string name) => flash.Call("GoTo", name);
 
-        public static bool HasActiveBoost(string name) => Flash.Call<bool>("HasActiveBoost", new string[1]{name});
+        public bool HasActiveBoost(string name) => flash.Call<bool>("HasActiveBoost", new string[1]{name});
 
-        public static void UseBoost(string id) => Flash.Call("UseBoost", id);
+        public void UseBoost(string id) => flash.Call("UseBoost", id);
 
-        public static void UseBoost(int id) => Flash.Call("UseBoost", id.ToString());
+        public void UseBoost(int id) => flash.Call("UseBoost", id.ToString());
 
-        public static void UseSkill(string index) => Flash.Call("UseSkill", index);
+        public void UseSkill(string index) => flash.Call("UseSkill", index);
 
-        public static void GetMapItem(string id) => Flash.Call("GetMapItem", id);
+        public void GetMapItem(string id) => flash.Call("GetMapItem", id);
 
-        public static void GetMapItem(int id) => Flash.Call("GetMapItem", id.ToString());
+        public void GetMapItem(int id) => flash.Call("GetMapItem", id.ToString());
 
-        public static void Logout() => Flash.Call("Logout", new string[0]);
+        public void Logout() => flash.Call("Logout", new string[0]);
 
-        static Player()
+        public Player()
         {
-            Bank = new Bank();
-            Inventory = new Inventory();
-            TempInventory = new TempInventory();
-            House = new House();
-            Quests = new Quests();
+            Bank = new Bank(flash);
+            Inventory = new Inventory(flash);
+            TempInventory = new TempInventory(flash);
+            House = new House(flash);
+            Quests = new Quests(flash);
         }
     }
 }

@@ -17,9 +17,15 @@ namespace Grimoire.Networking.Handlers
             "logoutWarning"
         };
 
+        private LogForm logForm;
+        public HandlerWarningsXt(LogForm newLogForm)
+        {
+            logForm = newLogForm;
+        }
+
         public void Handle(XtMessage message)
         {
-            LogForm.Instance.AppendChat(string.Format("[{0:hh:mm:ss}] {1} \r\n", DateTime.Now, message.Arguments[4]));
+            logForm.AppendChat(string.Format("[{0:hh:mm:ss}] {1} \r\n", DateTime.Now, message.Arguments[4]));
             //message.Send = false;
         }
     }

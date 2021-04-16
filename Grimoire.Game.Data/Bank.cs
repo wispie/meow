@@ -7,19 +7,25 @@ namespace Grimoire.Game.Data
 {
     public class Bank
     {
-        public List<InventoryItem> Items => Flash.Call<List<InventoryItem>>("GetBankItems", new string[0]);
+        private Flash flash;
+        public Bank(Flash newFlash)
+        {
+            flash = newFlash;
+        }
+
+        public List<InventoryItem> Items => flash.Call<List<InventoryItem>>("GetBankItems", new string[0]);
 
         public int AvailableSlots => TotalSlots - UsedSlots;
 
-        public int UsedSlots => Flash.Call<int>("UsedBankSlots", new string[0]);
+        public int UsedSlots => flash.Call<int>("UsedBankSlots", new string[0]);
 
-        public int TotalSlots => Flash.Call<int>("BankSlots", new string[0]);
+        public int TotalSlots => flash.Call<int>("BankSlots", new string[0]);
 
-        public void TransferToBank(string itemName) => Flash.Call("TransferToBank", itemName);
+        public void TransferToBank(string itemName) => flash.Call("TransferToBank", itemName);
 
-        public void TransferFromBank(string itemName) => Flash.Call("TransferToInventory", itemName);
+        public void TransferFromBank(string itemName) => flash.Call("TransferToInventory", itemName);
 
-        public void Swap(string invItemName, string bankItemName) => Flash.Call("BankSwap", invItemName, bankItemName);
+        public void Swap(string invItemName, string bankItemName) => flash.Call("BankSwap", invItemName, bankItemName);
 
         public bool ContainsItem(string itemName, string quantity = "*")
         {
@@ -37,12 +43,12 @@ namespace Grimoire.Game.Data
 
         public void Show()
         {
-            Flash.Call("ShowBank", new string[0]);
+            flash.Call("ShowBank", new string[0]);
         }
 
         public void LoadItems()
         {
-            Flash.Call("LoadBankItems", new string[0]);
+            flash.Call("LoadBankItems", new string[0]);
         }
     }
 }

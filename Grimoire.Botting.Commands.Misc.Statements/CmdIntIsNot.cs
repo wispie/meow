@@ -13,7 +13,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (Configuration.Tempvalues[Value1] == int.Parse(Value2))
+            if (instance.Configuration.Tempvalues[Value1] == int.Parse(Value2))
             {
                 instance.Index++;
             }

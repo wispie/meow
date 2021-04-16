@@ -16,11 +16,14 @@ namespace Grimoire.Botting.Commands.Misc
 
         public async Task Execute(IBotEngine instance)
         {
+            Player player = instance.player;
+            World world = instance.world;
+            Configuration configuration = instance.Configuration;
             string TargetName = "";
 
             if ( IsVar(PlayerName) )
             {
-                TargetName = Configuration.Tempvariable[GetVar(PlayerName)];
+                TargetName = instance.Configuration.Tempvariable[GetVar(PlayerName)];
                 Console.WriteLine("Using Variable Goto");
             }
             else
@@ -28,15 +31,15 @@ namespace Grimoire.Botting.Commands.Misc
                 TargetName = PlayerName;
             }
 
-            List<string> playersInMap = World.PlayersInMap;
-            Player.GoToPlayer(TargetName);
+            List<string> playersInMap = world.PlayersInMap;
+            player.GoToPlayer(TargetName);
             if (playersInMap.Any((string p) => p.Equals(TargetName, StringComparison.OrdinalIgnoreCase)))
             {
                 await Task.Delay(500);
             }
             else
             {
-                await instance.WaitUntil(() => World.PlayersInMap.Any((string p) => p.Equals(TargetName, StringComparison.OrdinalIgnoreCase)) && !World.IsMapLoading, null, 40);
+                await instance.WaitUntil(() => world.PlayersInMap.Any((string p) => p.Equals(TargetName, StringComparison.OrdinalIgnoreCase)) && !instance.world.IsMapLoading, null, 40);
             }
         }
 

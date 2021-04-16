@@ -1,3 +1,4 @@
+using Grimoire.Tools;
 using System.Threading.Tasks;
 
 namespace Grimoire.Botting
@@ -5,5 +6,6 @@ namespace Grimoire.Botting
     public interface IBotCommand
     {
         Task Execute(IBotEngine instance);
+        //bool RequiresDelay();
     }
 }

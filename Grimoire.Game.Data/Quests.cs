@@ -7,7 +7,13 @@ namespace Grimoire.Game.Data
 {
     public class Quests
     {
-        public List<Quest> QuestTree => Flash.Call<List<Quest>>("GetQuestTree", new string[0]);
+        private Flash flash;
+        public Quests(Flash newFlash)
+        {
+            flash = newFlash;
+        }
+
+        public List<Quest> QuestTree => flash.Call<List<Quest>>("GetQuestTree", new string[0]);
 
         public List<Quest> AcceptedQuests => QuestTree.Where((Quest q) => q.IsInProgress).ToList();
 
@@ -23,30 +29,30 @@ namespace Grimoire.Game.Data
 
         public void OnQuestCompleted(CompletedQuest quest) => this.QuestCompleted?.Invoke(quest);
 
-        public void Accept(int questId) => Flash.Call("Accept", questId.ToString());
+        public void Accept(int questId) => flash.Call("Accept", questId.ToString());
 
-        public void Accept(string questId) => Flash.Call("Accept", questId);
+        public void Accept(string questId) => flash.Call("Accept", questId);
 
-        public void Complete(int questId) => Flash.Call("Complete", questId.ToString());
+        public void Complete(int questId) => flash.Call("Complete", questId.ToString());
 
-        public void Complete(string questId) => Flash.Call("Complete", questId);
+        public void Complete(string questId) => flash.Call("Complete", questId);
 
-        public void Complete(string questId, string itemId) => Flash.Call("Complete", itemId, bool.TrueString);
+        public void Complete(string questId, string itemId) => flash.Call("Complete", itemId, bool.TrueString);
 
-        public void Load(int id) => Flash.Call("LoadQuest", id.ToString());
+        public void Load(int id) => flash.Call("LoadQuest", id.ToString());
 
-        public void Load(List<int> ids) => Flash.Call("LoadQuests", string.Join(",", ids));
+        public void Load(List<int> ids) => flash.Call("LoadQuests", string.Join(",", ids));
         
-        public void Get(List<int> ids) => Flash.Call("GetQuests", string.Join(",", ids.Select(delegate (int i) { return i.ToString(); })));
+        public void Get(List<int> ids) => flash.Call("GetQuests", string.Join(",", ids.Select(delegate (int i) { return i.ToString(); })));
 
-        public bool IsInProgress(int id) => Flash.Call<bool>("IsInProgress", id.ToString());
+        public bool IsInProgress(int id) => flash.Call<bool>("IsInProgress", id.ToString());
 
-        public bool IsInProgress(string id) => Flash.Call<bool>("IsInProgress", id);
+        public bool IsInProgress(string id) => flash.Call<bool>("IsInProgress", id);
 
-        public bool CanComplete(int id) => Flash.Call<bool>("CanComplete", id.ToString());
+        public bool CanComplete(int id) => flash.Call<bool>("CanComplete", id.ToString());
 
-        public bool CanComplete(string id) => Flash.Call<bool>("CanComplete", id);
+        public bool CanComplete(string id) => flash.Call<bool>("CanComplete", id);
 
-        public bool IsAvailable(int id) => Flash.Call<bool>("IsAvailable", id.ToString());
+        public bool IsAvailable(int id) => flash.Call<bool>("IsAvailable", id.ToString());
     }
 }

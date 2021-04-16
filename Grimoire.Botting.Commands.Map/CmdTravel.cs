@@ -26,21 +26,24 @@ namespace Grimoire.Botting.Commands.Map
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Others;
-            await WaitUntil(() => World.IsActionAvailable(LockActions.Transfer));
+            World world = instance.world;
+            BotData botData = instance.botData;
+            Player player = instance.player;
+            botData.BotState = BotData.State.Others;
+            await WaitUntil(() => world.IsActionAvailable(LockActions.Transfer));
             string cmdMap = Map.Contains("-") ? Map.Split('-')[0] : Map;
-            string map = Player.Map;
+            string map = player.Map;
             if (!cmdMap.Equals(map, StringComparison.OrdinalIgnoreCase))
             {
-                await WaitUntil(() => World.IsActionAvailable(LockActions.Transfer));
-                if (Player.CurrentState == Player.State.InCombat)
+                await WaitUntil(() => world.IsActionAvailable(LockActions.Transfer));
+                if (instance.player.CurrentState == Player.State.InCombat)
                 {
-                    Player.MoveToCell(Player.Cell, Player.Pad);
-                    await WaitUntil(() => Player.CurrentState != Player.State.InCombat);
+                    player.MoveToCell(instance.player.Cell, player.Pad);
+                    await WaitUntil(() => player.CurrentState != Player.State.InCombat);
                 }
-                Player.JoinMap(Map, Cell, Pad);
-                await WaitUntil(() => Player.Map.Equals(cmdMap, StringComparison.OrdinalIgnoreCase));
-                await WaitUntil(() => !World.IsMapLoading, 40);
+                player.JoinMap(Map, Cell, Pad);
+                await WaitUntil(() => player.Map.Equals(cmdMap, StringComparison.OrdinalIgnoreCase));
+                await WaitUntil(() => !world.IsMapLoading, 40);
             }
         }
 

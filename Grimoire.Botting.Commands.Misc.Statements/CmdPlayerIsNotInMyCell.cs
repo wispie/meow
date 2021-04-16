@@ -19,11 +19,11 @@ namespace Grimoire.Botting.Commands.Misc.Statements
             string reqs;
             if (IsVar(Value1))
             {
-                reqs = Flash.Call<string>("GetCellPlayers", new string[] { Configuration.Tempvariable[GetVar(Value1)] });
+                reqs = instance.flash.Call<string>("GetCellPlayers", new string[] { instance.Configuration.Tempvariable[GetVar(Value1)] });
             }
             else
             {
-                reqs = Flash.Call<string>("GetCellPlayers", new string[] { Value1 });
+                reqs = instance.flash.Call<string>("GetCellPlayers", new string[] { Value1 });
             }
 
             bool isExists = bool.Parse(reqs);

@@ -13,49 +13,51 @@ namespace Grimoire.Botting.Commands.Quest
 
         public async Task Execute(IBotEngine instance)
         {
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.TryQuestComplete));
-            if (!Player.Quests.CanComplete(Quest.Id))
+            BotData botData = instance.botData;
+            World world = instance.world;
+            await instance.WaitUntil(() => world.IsActionAvailable(LockActions.TryQuestComplete));
+            if (instance.player.Quests.CanComplete(Quest.Id))
             {
                 return;
             }
             //BotData.BotState = BotData.State.Quest;
-            string pCell = Player.Cell;
-            string pPad = Player.Pad;
+            string pCell = instance.player.Cell;
+            string pPad = instance.player.Pad;
             /*
             int tried = 0;
             while (instance.Configuration.EnsureComplete && Quest.IsInProgress && tried++ < instance.Configuration.EnsureTries)
             {
-                if (instance.Configuration.ExitCombatBeforeQuest && Player.CurrentState == Player.State.InCombat)
+                if (instance.Configuration.ExitCombatBeforeQuest && instance.player.CurrentState == instance.player.State.InCombat)
                 {
-                    Player.MoveToCell("Blank", "Left");
+                    instance.player.MoveToCell("Blank", "Left");
                     await Task.Delay(300);
-                    Player.MoveToCell("Blank", "Left");
+                    instance.player.MoveToCell("Blank", "Left");
                     await Task.Delay(300);
                 }
-                await instance.WaitUntil(() => World.IsActionAvailable(LockActions.TryQuestComplete));
+                await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.TryQuestComplete));
                 Quest.Complete();
                 await Task.Delay(400);
             }
             */
             if (instance.Configuration.ExitCombatBeforeQuest)
             {
-                while (instance.IsRunning && Player.CurrentState == Player.State.InCombat)
+                while (instance.IsRunning && instance.player.CurrentState == Player.State.InCombat)
                 {
-                    BotData.BotState = BotData.State.Quest;
-                    Player.MoveToCell(Player.Cell, Player.Pad);
+                    botData.BotState = BotData.State.Quest;
+                    instance.player.MoveToCell(instance.player.Cell, instance.player.Pad);
                     await Task.Delay(1000);
                 }
             }
-            if (Player.CurrentState == Player.State.InCombat)
+            if (instance.player.CurrentState == Player.State.InCombat)
             {
                 await Task.Delay(1250);
             }
             Quest.Complete();
-            await instance.WaitUntil(() => !Player.Quests.IsInProgress(Quest.Id));
+            await instance.WaitUntil(() => !instance.player.Quests.IsInProgress(Quest.Id));
             /*
-            if (instance.Configuration.ExitCombatBeforeQuest && Player.Cell != pCell)
+            if (instance.Configuration.ExitCombatBeforeQuest && player.Cell != pCell)
             {
-                Player.MoveToCell(pCell, pPad);
+                instance.player.MoveToCell(pCell, pPad);
             }
             */
         }

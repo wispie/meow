@@ -7,6 +7,12 @@ namespace Grimoire.Game.Data
 {
     public class InventoryItem
     {
+        private World world;
+        public InventoryItem(World newWorld)
+        {
+            world = newWorld;
+        }
+
         private string _name;
 
         public static readonly string[] EquippableCategories = new string[14]
@@ -157,7 +163,7 @@ namespace Grimoire.Game.Data
             {
                 if (string.IsNullOrEmpty(_name))
                 {
-                    _name = World.ItemTree.FirstOrDefault((InventoryItem i) => i.Id == Id)?.Name;
+                    _name = world.ItemTree.FirstOrDefault((InventoryItem i) => i.Id == Id)?.Name;
                 }
                 return _name;
             }

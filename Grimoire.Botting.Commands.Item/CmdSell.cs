@@ -16,13 +16,16 @@ namespace Grimoire.Botting.Commands.Item
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Transaction;
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.SellItem));
-            InventoryItem item = Player.Inventory.Items.FirstOrDefault((InventoryItem i) => i.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase));
+            BotData botData = instance.botData;
+            Player player = instance.player;
+            Shop shop = instance.shop;
+            botData.BotState = BotData.State.Transaction;
+            await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.SellItem));
+            InventoryItem item = player.Inventory.Items.FirstOrDefault((InventoryItem i) => i.Name.Equals(ItemName, StringComparison.OrdinalIgnoreCase));
             if (item != null)
             {
-                Shop.SellItem(ItemName);
-                await instance.WaitUntil(() => !Player.Inventory.ContainsItem(item.Name, item.Quantity.ToString()));
+                shop.SellItem(ItemName);
+                await instance.WaitUntil(() => !player.Inventory.ContainsItem(item.Name, item.Quantity.ToString()));
             }
         }
 

@@ -13,7 +13,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (Player.TempInventory.ContainsItem(Value1, Value2))
+            if (instance.player.TempInventory.ContainsItem(Value1, Value2))
             {
                 instance.Index++;
             }

@@ -49,8 +49,8 @@ namespace Grimoire.Properties
         internal static string statementcmds => ResourceManager.GetString("statementcmds", resourceCulture);
 
         //internal static byte[] aqlitegrimoire => (byte[])ResourceManager.GetObject("testgrimoire", resourceCulture);
-        internal static byte[] aqlitegrimoire => File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "catgirl.swf"));
-        internal static byte[] aqlitegrimoiredebug => File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dcatgirl.swf"));
+        internal byte[] aqlitegrimoire => File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "catgirl.swf"));
+        internal byte[] aqlitegrimoiredebug => File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "dcatgirl.swf"));
         //internal static byte[] aqlitegrimoire => (byte[])ResourceManager.GetObject("testgrimoire2", resourceCulture);
 
         //internal static byte[] aqlitegrimoire => (byte[])ResourceManager.GetObject("aqlitegrimoire", resourceCulture);

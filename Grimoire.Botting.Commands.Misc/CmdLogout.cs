@@ -7,7 +7,7 @@ namespace Grimoire.Botting.Commands.Misc
     {
         public Task Execute(IBotEngine instance)
         {
-            Player.Logout();
+            instance.player.Logout();
             return Task.FromResult<object>(null);
         }
 

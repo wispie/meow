@@ -20,8 +20,9 @@ namespace Grimoire.Botting.Commands.Item
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Transaction;
-            if (!Player.Inventory.ContainsItem(ItemName, "*"))
+            BotData botData = instance.botData;
+            botData.BotState = BotData.State.Transaction;
+            if (!instance.player.Inventory.ContainsItem(ItemName, "*"))
             {
                 try
                 {
@@ -32,7 +33,7 @@ namespace Grimoire.Botting.Commands.Item
                             await abb.Perform(ItemName, PageNumberCap);
                         }
                     });
-                    Player.Logout();
+                    instance.player.Logout();
                 }
                 catch
                 {

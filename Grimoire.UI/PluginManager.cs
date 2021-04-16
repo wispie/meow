@@ -23,11 +23,6 @@ namespace Grimoire.UI
         private TreeView treePlugins;
         public DarkTextBox txtPlugin;
 
-        public static PluginManager Instance
-        {
-            get;
-        } = new PluginManager();
-
         public PluginManager()
         {
             InitializeComponent();

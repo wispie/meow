@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Grimoire.Game
 {
-    public static class BotData
+    public class BotData
     {
         public enum State
         {
@@ -14,39 +14,39 @@ namespace Grimoire.Game
             Quest
         }
 
-        public static List<string> DropList = new List<string>();
+        public List<string> DropList = new List<string>();
 
-        public static string BotMap
+        public string BotMap
         {
             get;
             set;
         } = null;
 
-        public static string BotCell
+        public string BotCell
         {
             get;
             set;
         } = null;
 
-        public static string BotPad
+        public string BotPad
         {
             get;
             set;
         } = null;
 
-        public static State BotState
+        public State BotState
         {
             get;
             set;
         } = State.Others;
 
-        public static string BotSkill
+        public string BotSkill
         {
             get;
             set;
         } = null;
 
-        public static Dictionary<string, int> SkillSet
+        public Dictionary<string, int> SkillSet
         {
             get;
             set;

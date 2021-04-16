@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Grimoire.Tools;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -7,6 +8,12 @@ namespace Grimoire.Botting
 {
     public class CosmeticEquipment
     {
+        private Flash flash;
+        public CosmeticEquipment(Flash newFlash)
+        {
+            flash = newFlash;
+        }
+
         private static Dictionary<EquipType, string> _cosMap = new Dictionary<EquipType, string>()
         {
             { EquipType.Helm, "he" },
@@ -17,7 +24,7 @@ namespace Grimoire.Botting
             { EquipType.Weapon, "Weapon" }
         };
 
-        private static Dictionary<string, EquipType> _backMap = _cosMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        private Dictionary<string, EquipType> _backMap = _cosMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
 
         public EquipType Slot { get; set; }
 
@@ -46,8 +53,8 @@ namespace Grimoire.Botting
             equip.sMeta = Meta;
             if (ID != 0)
                 equip.ItemID = ID;
-            Tools.Flash.Call("SetEquip", new object[2] { slot , equip });
-            //Tools.Flash.Instance.CallGameFunction("world.myAvatar.loadMovieAtES", slot, SWFFile, Link);
+            flash.Call("SetEquip", new object[2] { slot , equip });
+            //Tools.flash.Instance.CallGameFunction("world.myAvatar.loadMovieAtES", slot, SWFFile, Link);
         }
 
         public override string ToString()
@@ -55,9 +62,9 @@ namespace Grimoire.Botting
             return $"{Slot}: {SWFFile};{Link}";
         }
         
-        public static List<CosmeticEquipment> Get(int id)
+        public List<CosmeticEquipment> Get(int id)
         {
-            Dictionary<string, CosmeticEquipment> items = JsonConvert.DeserializeObject<Dictionary<string, CosmeticEquipment>>(Tools.Flash.Call("GetEquip", id)) ?? new Dictionary<string, CosmeticEquipment>();
+            Dictionary<string, CosmeticEquipment> items = JsonConvert.DeserializeObject<Dictionary<string, CosmeticEquipment>>(flash.Call("GetEquip", id)) ?? new Dictionary<string, CosmeticEquipment>();
             return items.Select(kvp => (kvp.Value.Slot = _backMap.TryGetValue(kvp.Key, out EquipType slot) ? slot : EquipType.None) != EquipType.None ? kvp.Value : null).Where(x => x != null).ToList();
         }
     }

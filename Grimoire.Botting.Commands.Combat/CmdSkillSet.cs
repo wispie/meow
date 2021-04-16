@@ -13,8 +13,9 @@ namespace Grimoire.Botting.Commands.Combat
 
         public Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Combat;
-            BotData.BotSkill = Name;
+            BotData botData = instance.botData;
+            botData.BotState = BotData.State.Combat;
+            botData.BotSkill = Name;
             return Task.FromResult<object>(null);
         }
 

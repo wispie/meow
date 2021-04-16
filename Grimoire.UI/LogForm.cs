@@ -32,7 +32,7 @@ namespace Grimoire.UI
             }
         }
 
-        public static DebugLogger logRec;
+        public DebugLogger logRec;
 
         private IContainer components;
 
@@ -89,11 +89,6 @@ namespace Grimoire.UI
                     return txtLogChat;
                 }
             }
-        }
-
-        public static LogForm Instance
-        {
-            get;
         }
 
         public LogForm()
@@ -433,11 +428,6 @@ namespace Grimoire.UI
             this.tabLogChat.PerformLayout();
             this.ResumeLayout(false);
 
-        }
-
-        static LogForm()
-        {
-            Instance = new LogForm();
         }
 
         private void changeColorToolStripMenuItem_Click(object sender, EventArgs e)

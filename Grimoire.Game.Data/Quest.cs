@@ -7,6 +7,12 @@ namespace Grimoire.Game.Data
 {
     public class Quest
     {
+        private Flash flash;
+        public Quest(Flash newFlash)
+        {
+            flash = newFlash;
+        }
+
         [JsonProperty("sFaction")]
         public string Faction
         {
@@ -153,7 +159,7 @@ namespace Grimoire.Game.Data
         {
             get
             {
-                return Flash.Call<bool>("IsInProgress", new string[1]
+                return flash.Call<bool>("IsInProgress", new string[1]
                 {
                     Id.ToString()
                 });
@@ -164,7 +170,7 @@ namespace Grimoire.Game.Data
         {
             get
             {
-                return Flash.Call<bool>("CanComplete", new string[1]
+                return flash.Call<bool>("CanComplete", new string[1]
 {
             Id.ToString()
 });
@@ -173,18 +179,18 @@ namespace Grimoire.Game.Data
 
         public void Accept()
         {
-            Flash.Call("Accept", Id.ToString());
+            flash.Call("Accept", Id.ToString());
         }
 
         public void Complete()
         {
             if (!string.IsNullOrEmpty(ItemId))
             {
-                Flash.Call("Complete", Id.ToString(), ItemId);
+                flash.Call("Complete", Id.ToString(), ItemId);
             }
             else
             {
-                Flash.Call("Complete", Id.ToString());
+                flash.Call("Complete", Id.ToString());
             }
         }
 

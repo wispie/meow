@@ -4,6 +4,12 @@ namespace Grimoire.Tools
 {
     public class Hotkey
     {
+        private KeyboardHook keyboardHook;
+        public Hotkey(KeyboardHook newKeyboardHook)
+        {
+            keyboardHook = newKeyboardHook;
+        }
+
         public string Text
         {
             get;
@@ -24,12 +30,12 @@ namespace Grimoire.Tools
 
         public void Install()
         {
-            KeyboardHook.Instance.TargetedKeys.Add(Key);
+            keyboardHook.TargetedKeys.Add(Key);
         }
 
         public void Uninstall()
         {
-            KeyboardHook.Instance.TargetedKeys.Remove(Key);
+            keyboardHook.TargetedKeys.Remove(Key);
         }
     }
 }

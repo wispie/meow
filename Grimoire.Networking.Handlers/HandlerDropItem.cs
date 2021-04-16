@@ -19,18 +19,26 @@ namespace Grimoire.Networking.Handlers
             "dropItem"
         };
 
+        private BotManager botManager;
+        private World world;
+        public HandlerDropItem(BotManager newBotManager, World newWorld)
+        {
+            botManager = newBotManager;
+            world = newWorld;
+        }
+
         public void Handle(JsonMessage message)
         {
             JToken jToken = message.DataObject?["items"];
             if (jToken != null)
             {
                 InventoryItem item = jToken.ToObject<Dictionary<int, InventoryItem>>().First().Value;
-                if (BotManager.Instance.ActiveBotEngine.IsRunning)
+                if (botManager.ActiveBotEngine.IsRunning)
                 {
-                    Configuration configuration = BotManager.Instance.ActiveBotEngine.Configuration;
+                    Configuration configuration = botManager.ActiveBotEngine.Configuration;
                     message.Send = !configuration.EnableRejection || !configuration.Drops.All((string d) => !d.Equals(item.Name, StringComparison.OrdinalIgnoreCase));
                 }
-                World.OnItemDropped(item);
+                world.OnItemDropped(item);
             }
         }
     }

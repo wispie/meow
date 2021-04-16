@@ -14,7 +14,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (!(Value1.Contains("-") ? Value1.Split('-')[0] : Value1).Equals(Player.Map, StringComparison.OrdinalIgnoreCase))
+            if (!(Value1.Contains("-") ? Value1.Split('-')[0] : Value1).Equals(instance.player.Map, StringComparison.OrdinalIgnoreCase))
             {
                 instance.Index++;
             }

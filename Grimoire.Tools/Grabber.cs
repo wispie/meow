@@ -13,11 +13,25 @@ using System.Dynamic;
 
 namespace Grimoire.Tools
 {
-    public static class Grabber
+    public class Grabber
     {
-        public static void GrabQuests(TreeView tree)
+        private Player player;
+        private World world;
+        private Shop shop;
+        private BotManager botManager;
+        private Flash flash;
+        public Grabber(World newWorld, Player newPlayer, Flash newFlash, BotManager newBotManager, Shop newShop)
         {
-            List<Quest> list = Player.Quests.QuestTree?.OrderBy((Quest q) => q.Id).ToList();
+            shop = newShop;
+            botManager = newBotManager;
+            world = newWorld;
+            flash = newFlash;
+            player = newPlayer;
+        }
+
+        public void GrabQuests(TreeView tree)
+        {
+            List<Quest> list = player.Quests.QuestTree?.OrderBy((Quest q) => q.Id).ToList();
             if (list != null && list.Count > 0)
             {
                 foreach (Quest item in list)
@@ -68,9 +82,9 @@ namespace Grimoire.Tools
             }
         }
 
-        public static void GrabShopItems(TreeView tree)
+        public void GrabShopItems(TreeView tree)
         {
-            List<ShopInfo> list = World.LoadedShops?.OrderBy((ShopInfo s) => s.Name).ToList();
+            List<ShopInfo> list = world.LoadedShops?.OrderBy((ShopInfo s) => s.Name).ToList();
             if (list != null && list.Count > 0)
             {
                 foreach (ShopInfo item in list)
@@ -103,9 +117,9 @@ namespace Grimoire.Tools
             }
         }
 
-        public static void GrabQuestIds(TreeView tree)
+        public void GrabQuestIds(TreeView tree)
         {
-            List<Quest> list = Player.Quests.QuestTree?.OrderBy((Quest q) => q.Id).ToList();
+            List<Quest> list = player.Quests.QuestTree?.OrderBy((Quest q) => q.Id).ToList();
             if (list != null && list.Count > 0)
             {
                 foreach (Quest item in list)
@@ -115,19 +129,19 @@ namespace Grimoire.Tools
             }
         }
 
-        public static void GrabInventoryItems(TreeView tree)
+        public void GrabInventoryItems(TreeView tree)
         {
             GrabItems(tree, inventory: true);
         }
 
-        public static void GrabBankItems(TreeView tree)
+        public void GrabBankItems(TreeView tree)
         {
             GrabItems(tree, inventory: false);
         }
 
-        private static void GrabItems(TreeView tree, bool inventory)
+        private void GrabItems(TreeView tree, bool inventory)
         {
-            List<InventoryItem> list = (inventory ? Player.Inventory.Items : Player.Bank.Items)?.OrderBy((InventoryItem i) => i.Name).ToList();
+            List<InventoryItem> list = (inventory ? player.Inventory.Items : player.Bank.Items)?.OrderBy((InventoryItem i) => i.Name).ToList();
             if (list != null && list.Count > 0)
             {
                 foreach (InventoryItem item in list)
@@ -149,9 +163,9 @@ namespace Grimoire.Tools
             }
         }
 
-        public static void GrabTempItems(TreeView tree)
+        public void GrabTempItems(TreeView tree)
         {
-            List<TempItem> list = Player.TempInventory.Items?.OrderBy((TempItem i) => i.Name).ToList();
+            List<TempItem> list = player.TempInventory.Items?.OrderBy((TempItem i) => i.Name).ToList();
             if (list != null && list.Count > 0)
             {
                 foreach (TempItem item in list)
@@ -164,9 +178,9 @@ namespace Grimoire.Tools
             }
         }
 
-        public static void GrabMonsters(TreeView tree)
+        public void GrabMonsters(TreeView tree)
         {
-            List<Monster> list = (from x in World.AvailableMonsters?.GroupBy((Monster m) => m.Name)
+            List<Monster> list = (from x in world.AvailableMonsters?.GroupBy((Monster m) => m.Name)
                                   select x.First()).ToList();
             if (list != null && list.Count > 0)
             {
@@ -182,7 +196,7 @@ namespace Grimoire.Tools
             }
         }
 
-        private static ContextMenuStrip Wiki(string item)
+        private ContextMenuStrip Wiki(string item)
         {
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
@@ -208,7 +222,7 @@ namespace Grimoire.Tools
             return contextMenuStrip;
         }
 
-        private static ContextMenuStrip Wiki(ShopInfo item)
+        private ContextMenuStrip Wiki(ShopInfo item)
         {
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
@@ -235,7 +249,7 @@ namespace Grimoire.Tools
             };
             toolStripMenuItem2.Click += delegate (object S, EventArgs E)
             {
-                Shop.Load(item.Id);
+                shop.Load(item.Id);
             };
             contextMenuStrip.Items.Add(toolStripMenuItem);
             contextMenuStrip.Items.Add(toolStripMenuItem1);
@@ -243,7 +257,7 @@ namespace Grimoire.Tools
             return contextMenuStrip;
         }
 
-        private static ContextMenuStrip Wiki(InventoryItem Item)
+        private ContextMenuStrip Wiki(InventoryItem Item)
         {
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
@@ -286,7 +300,7 @@ namespace Grimoire.Tools
                 equip.sFile = Item.File;
                 equip.sLink = Item.Link;
                 equip.sType = txt;
-                Flash.Call("SetEquip", new object[2] { slot, equip });
+                flash.Call("SetEquip", new object[2] { slot, equip });
             };
             contextMenuStrip.Items.Add(toolStripMenuItem);
             contextMenuStrip.Items.Add(toolStripMenuItem1);
@@ -295,7 +309,7 @@ namespace Grimoire.Tools
             return contextMenuStrip;
         }
 
-        private static ContextMenuStrip MenuQuest(int QuestID)
+        private ContextMenuStrip MenuQuest(int QuestID)
         {
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
@@ -320,15 +334,15 @@ namespace Grimoire.Tools
             };
             toolStripMenuItem1.Click += delegate (object S, EventArgs E)
             {
-                Player.Quests.Accept(QuestID);
+                player.Quests.Accept(QuestID);
             };
             toolStripMenuItem2.Click += delegate (object S, EventArgs E)
             {
-                Player.Quests.Complete(QuestID);
+                player.Quests.Complete(QuestID);
             };
             toolStripMenuItem3.Click += delegate (object S, EventArgs E)
             {
-                Player.Quests.Load(QuestID);
+                player.Quests.Load(QuestID);
             };
             contextMenuStrip.Items.Add(toolStripMenuItem);
             contextMenuStrip.Items.Add(toolStripMenuItem1);
@@ -337,7 +351,7 @@ namespace Grimoire.Tools
             return contextMenuStrip;
         }
 
-        private static ContextMenuStrip MenuItems(List<InventoryItem> Items)
+        private ContextMenuStrip MenuItems(List<InventoryItem> Items)
         {
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
@@ -383,7 +397,7 @@ namespace Grimoire.Tools
             return contextMenuStrip;
         }
 
-        private static ContextMenuStrip MenuItem(InventoryItem Item)
+        private ContextMenuStrip MenuItem(InventoryItem Item)
         {
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
@@ -446,7 +460,7 @@ namespace Grimoire.Tools
             return contextMenuStrip;
         }
 
-        private static ContextMenuStrip MenuItem(ItemBase Item)
+        private ContextMenuStrip MenuItem(ItemBase Item)
         {
             ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
             ToolStripMenuItem toolStripMenuItem = new ToolStripMenuItem
@@ -522,7 +536,7 @@ namespace Grimoire.Tools
                 equip.sFile = Item.File;
                 equip.sLink = Item.Link;
                 equip.sType = txt;
-                Flash.Call("SetEquip", new object[2] { slot, equip });
+                flash.Call("SetEquip", new object[2] { slot, equip });
             };
             contextMenuStrip.Items.Add(toolStripMenuItem);
             contextMenuStrip.Items.Add(toolStripMenuItem2);
@@ -534,29 +548,29 @@ namespace Grimoire.Tools
             return contextMenuStrip;
         }
 
-        private static void Search(string Item)
+        private void Search(string Item)
         {
             //BrowserForm.Instance.LoadUrl(Item);
             Process.Start(Item);
         }
 
-        private static void AddDrop(object s, EventArgs e, InventoryItem Item)
+        private void AddDrop(object s, EventArgs e, InventoryItem Item)
         {
             if (!Item.IsTemporary)
             {
-                BotManager.Instance.AddDrop(Item.Name);
+                botManager.AddDrop(Item.Name);
             }
         }
 
-        private static void AddItem(object s, EventArgs e, InventoryItem Item)
+        private void AddItem(object s, EventArgs e, InventoryItem Item)
         {
             if (!Item.IsTemporary)
             {
-                BotManager.Instance.AddItem(Item.Name);
+                botManager.AddItem(Item.Name);
             }
         }
 
-        private static void AddDrops(object s, EventArgs e, List<InventoryItem> Items)
+        private void AddDrops(object s, EventArgs e, List<InventoryItem> Items)
         {
             foreach (InventoryItem Item in Items)
             {
@@ -564,7 +578,7 @@ namespace Grimoire.Tools
             }
         }
 
-        private static void AddItems(object s, EventArgs e, List<InventoryItem> Items)
+        private void AddItems(object s, EventArgs e, List<InventoryItem> Items)
         {
             foreach (InventoryItem Item in Items)
             {
@@ -572,23 +586,23 @@ namespace Grimoire.Tools
             }
         }
 
-        private static void AddDrop(object s, EventArgs e, ItemBase Item)
+        private void AddDrop(object s, EventArgs e, ItemBase Item)
         {
             if (!Item.Temp)
             {
-                BotManager.Instance.AddDrop(Item.Name);
+                botManager.AddDrop(Item.Name);
             }
         }
 
-        private static void AddItem(object s, EventArgs e, ItemBase Item)
+        private void AddItem(object s, EventArgs e, ItemBase Item)
         {
             if (!Item.Temp)
             {
-                BotManager.Instance.AddItem(Item.Name);
+                botManager.AddItem(Item.Name);
             }
         }
 
-        private static void AddDrops(object s, EventArgs e, List<ItemBase> Items)
+        private void AddDrops(object s, EventArgs e, List<ItemBase> Items)
         {
             foreach (ItemBase Item in Items)
             {
@@ -596,7 +610,7 @@ namespace Grimoire.Tools
             }
         }
 
-        private static void AddItems(object s, EventArgs e, List<ItemBase> Items)
+        private void AddItems(object s, EventArgs e, List<ItemBase> Items)
         {
             foreach (ItemBase Item in Items)
             {
@@ -605,9 +619,9 @@ namespace Grimoire.Tools
         }
 
 
-        private static void AddQuest(object s, EventArgs e, int ID)
+        private void AddQuest(object s, EventArgs e, int ID)
         {
-            BotManager.Instance.AddQuest(ID);
+            botManager.AddQuest(ID);
         }
     }
 }

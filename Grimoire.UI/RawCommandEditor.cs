@@ -26,7 +26,7 @@ namespace Grimoire.UI
             }
         }
 
-        private RawCommandEditor()
+        public RawCommandEditor()
         {
             InitializeComponent();
         }
@@ -50,7 +50,7 @@ namespace Grimoire.UI
             }
         }
 
-        public static string Show(string content)
+        public string Show(string content)
         {
             using (RawCommandEditor rawCommandEditor = new RawCommandEditor
             {

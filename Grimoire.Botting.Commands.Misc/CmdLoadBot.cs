@@ -42,8 +42,7 @@ namespace Grimoire.Botting.Commands.Misc
                     {
                         instance.Configuration = configuration;
                         instance.Index = -1;
-                        instance.LoadBankItems();
-                        instance.LoadAllQuests();
+                        instance.bot.LoadAllQuests();
                     }
                 }
                 catch

@@ -13,7 +13,7 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (World.DropStack.Contains(Value1))
+            if (instance.world.DropStack.Contains(Value1))
             {
                 instance.Index++;
             }

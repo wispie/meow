@@ -4,6 +4,12 @@ namespace Grimoire.Game.Data
 {
     public class Skill
     {
+        private Flash flash;
+        public Skill(Flash newFlash)
+        {
+            flash = newFlash;
+        }
+
         public enum SkillType
         {
             Normal,
@@ -41,9 +47,9 @@ namespace Grimoire.Game.Data
             set;
         }
 
-        public static string GetSkillName(string index)
+        public string GetSkillName(string index)
         {
-            return Flash.Call<string>("GetSkillName", new string[1]
+            return flash.Call<string>("GetSkillName", new string[1]
             {
                 index
             });

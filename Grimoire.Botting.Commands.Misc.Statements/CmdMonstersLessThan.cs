@@ -13,7 +13,8 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
-            if (World.VisibleMonsters.Count >= int.Parse(Value1))
+            World world = instance.world;
+            if (world.VisibleMonsters.Count >= int.Parse(Value1))
             {
                 instance.Index++;
             }

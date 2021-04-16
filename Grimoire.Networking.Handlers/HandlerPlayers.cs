@@ -6,6 +6,13 @@ namespace Grimoire.Networking.Handlers
 {
     public class HandlerPlayers : IXtMessageHandler
     {
+        private OptionsManager optionsManager;
+        private Player player;
+        public HandlerPlayers(OptionsManager newOptions, Player newPlayer)
+        {
+            optionsManager = newOptions;
+            player = newPlayer;
+        }
         public string[] HandledCommands
         {
             get;
@@ -17,10 +24,10 @@ namespace Grimoire.Networking.Handlers
 
         public void Handle(XtMessage message)
         {
-            if (OptionsManager.HidePlayers && Player.Inventory.Items.Count > 0)
+            if (optionsManager.HidePlayers && player.Inventory.Items.Count > 0)
             {
-                message.Send = message.RawContent.Contains(Player.UserID.ToString()) ? true : false;
-                OptionsManager.DestroyPlayers();
+                message.Send = message.RawContent.Contains(player.UserID.ToString()) ? true : false;
+                optionsManager.DestroyPlayers();
             }
         }
     }

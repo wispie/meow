@@ -14,11 +14,13 @@ namespace Grimoire.Botting.Commands.Quest
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Quest;
-            await instance.WaitUntil(() => Player.Quests.QuestTree.Any((Game.Data.Quest q) => q.Id == Quest.Id));
-            await instance.WaitUntil(() => World.IsActionAvailable(LockActions.AcceptQuest));
+            BotData botData = instance.botData;
+            Player player = instance.player;
+            botData.BotState = BotData.State.Quest;
+            await instance.WaitUntil(() => player.Quests.QuestTree.Any((Game.Data.Quest q) => q.Id == Quest.Id));
+            await instance.WaitUntil(() => instance.world.IsActionAvailable(LockActions.AcceptQuest));
             Quest.Accept();
-            await instance.WaitUntil(() => Player.Quests.IsInProgress(Quest.Id));
+            await instance.WaitUntil(() => player.Quests.IsInProgress(Quest.Id));
         }
 
         public override string ToString()

@@ -1,6 +1,8 @@
+using Grimoire.Botting;
 using Grimoire.Game;
 using Grimoire.Networking.Handlers;
 using Grimoire.Tools;
+using Grimoire.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,15 @@ namespace Grimoire.Networking
 {
     public class Proxy
     {
+        private OptionsManager optionsManager;
+        private LogForm logForm;
+        private World world;
+        private Root root;
+        private Flash flash;
+        private Player player;
+        private BotManager botManager;
+        private Configuration configuration;
+
         public delegate void Receive(Message message);
 
         private readonly List<IJsonMessageHandler> _handlersJson;
@@ -35,52 +46,48 @@ namespace Grimoire.Networking
 
         private const int MaxBufferSize = 1024;
 
-        private static readonly CancellationTokenSource AppClosingToken;
+        private readonly CancellationTokenSource AppClosingToken;
 
         private bool _shouldConnect;
 
         private bool _policyReceived;
 
-        public static Proxy Instance
-        {
-            get;
-            set;
-        }
-
-        public int ListenerPort
-        {
-            get;
-            set;
-        }
-
+        public int ListenerPort;
         public event Receive ReceivedFromClient;
-
         public event Receive ReceivedFromServer;
-
-        private Proxy()
+        public Proxy(Player newPlayer, Root newRoot, Flash newFlash, LogForm newLogForm, 
+            OptionsManager newOptions, World newWorld, BotManager newBotManager, Configuration newConfig, int newPort)
         {
+            ListenerPort = newPort;
+            botManager = newBotManager;
+            configuration = newConfig;
+            flash = newFlash;
+            root = newRoot;
+            player = newPlayer;
+            world = newWorld;
+            optionsManager = newOptions;
+            logForm = newLogForm;
             _handlersJson = new List<IJsonMessageHandler>
             {
-                new HandlerSkills(),
-                new HandlerDropItem(),
-                new HandlerGetQuests(),
-                new HandlerQuestComplete(),
+                new HandlerDropItem(botManager, world),
+                new HandlerGetQuests(player),
+                new HandlerQuestComplete(logForm, player),
                 //new HandlerMapJoin(),
                 //new HandlerLoadBank(),
-                new HandlerLoadShop()
+                new HandlerLoadShop(world)
             };
             _handlersXt = new List<IXtMessageHandler>
             {
-                new HandlerWarningsXt(),
-                new HandlerLogin(),
+                new HandlerWarningsXt(logForm),
+                new HandlerLogin(configuration, logForm),
                 //new HandlerAFK(),
-                new HandlerChat(),
-                new HandlerXtJoin(),
+                new HandlerChat(this, world, player, optionsManager, logForm),
+                new HandlerXtJoin(optionsManager, logForm),
                 //new HandlerXtCellJoin()
             };
             _handlersXml = new List<IXmlMessageHandler>
             {
-                new HandlerPolicy(),
+                new HandlerPolicy(this),
                 new HandlerWarningsXml()
             };
             _shouldConnect = true;
@@ -160,7 +167,7 @@ namespace Grimoire.Networking
             _listener.Start();
             _client = await _listener.AcceptTcpClientAsync();
             _server = new TcpClient();
-            string text = Flash.Call<string>("RealAddress", new string[0]);
+            string text = flash.Call<string>("RealAddress", new string[0]);
             IPAddress gameServerAddress;
             try
             {
@@ -173,7 +180,7 @@ namespace Grimoire.Networking
             }
             if (_policyReceived)
             {
-                await _server.ConnectAsync(gameServerAddress, Flash.Call<int>("RealPort", new string[0]));
+                await _server.ConnectAsync(gameServerAddress, flash.Call<int>("RealPort", new string[0]));
             }
             else
             {
@@ -181,7 +188,7 @@ namespace Grimoire.Networking
                 byte[] sbuffer2 = new byte[1024];
                 byte[] buffer = cbuffer2;
                 cbuffer2 = ReceiveOnce(buffer, await _client.GetStream().ReadAsync(cbuffer2, 0, 1024));
-                await _server.ConnectAsync(gameServerAddress, Flash.Call<int>("RealPort", new string[0]));
+                await _server.ConnectAsync(gameServerAddress, flash.Call<int>("RealPort", new string[0]));
                 await SendToServer(cbuffer2);
                 buffer = sbuffer2;
                 sbuffer2 = ReceiveOnce(buffer, await _server.GetStream().ReadAsync(sbuffer2, 0, 1024));
@@ -333,7 +340,7 @@ namespace Grimoire.Networking
 
         public async Task SendToServer(string data)
         {
-            string text = data.Replace("{ROOM_ID}", World.RoomId.ToString());
+            string text = data.Replace("{ROOM_ID}", world.RoomId.ToString());
             if (text != null && text.Length > 0)
             {
                 if (text[text.Length - 1] != 0)
@@ -442,9 +449,8 @@ namespace Grimoire.Networking
             return null;
         }
 
-        static Proxy()
+        public Proxy()
         {
-            Instance = new Proxy();
             AppClosingToken = new CancellationTokenSource();
         }
     }

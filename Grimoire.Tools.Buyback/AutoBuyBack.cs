@@ -9,13 +9,19 @@ namespace Grimoire.Tools.Buyback
 {
     public class AutoBuyBack : IDisposable
     {
+        private Flash flash;
+        public AutoBuyBack(Flash newFlash)
+        {
+            flash = newFlash;
+        }
+
         private const string UrlBuyBack = "inventory.aspx?tab=buyback";
 
         private readonly HttpClient _client;
 
-        protected internal string Username => Flash.Call<string>("GetUsername", new string[0]);
+        protected internal string Username => flash.Call<string>("GetUsername", new string[0]);
 
-        protected internal string Password => Flash.Call<string>("GetPassword", new string[0]);
+        protected internal string Password => flash.Call<string>("GetPassword", new string[0]);
 
         public AutoBuyBack()
         {

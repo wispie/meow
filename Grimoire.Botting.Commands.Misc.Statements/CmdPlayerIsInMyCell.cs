@@ -9,10 +9,12 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 {
     public class CmdPlayerIsInMyCell : StatementCommand, IBotCommand
     {
-        public CmdPlayerIsInMyCell()
+        private Flash flash;
+        public CmdPlayerIsInMyCell(Flash newFlash)
         {
             Tag = "Player";
             Text = "Player is in my cell";
+            flash = newFlash;
         }
 
         public Task Execute(IBotEngine instance)
@@ -20,11 +22,11 @@ namespace Grimoire.Botting.Commands.Misc.Statements
             string reqs;
             if ( IsVar(Value1) )
             {
-                reqs = Flash.Call<string>("GetCellPlayers", new string[] { Configuration.Tempvariable[GetVar(Value1)] });
+                reqs = flash.Call<string>("GetCellPlayers", new string[] { instance.Configuration.Tempvariable[GetVar(Value1)] });
             }
             else
             {
-                reqs = Flash.Call<string>("GetCellPlayers", new string[] { Value1 });
+                reqs = flash.Call<string>("GetCellPlayers", new string[] { Value1 });
             }
 
             bool isExists = bool.Parse(reqs);

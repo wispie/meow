@@ -31,14 +31,15 @@ namespace Grimoire.Botting.Commands.Combat
 
         public async Task Execute(IBotEngine instance)
         {
-            BotData.BotState = BotData.State.Combat;
+            BotData botData = instance.botData;
+            botData.BotState = BotData.State.Combat;
             CmdKill kill = new CmdKill
             {
                 Monster = Monster
             };
             if (ItemType == ItemType.Items)
             {
-                while (instance.IsRunning && Player.IsLoggedIn && Player.IsAlive && !Player.Inventory.ContainsItem(ItemName, Quantity))
+                while (instance.IsRunning && instance.player.IsLoggedIn && instance.player.IsAlive && !instance.player.Inventory.ContainsItem(ItemName, Quantity))
                 {
                     await kill.Execute(instance);
                     await Task.Delay(1000);
@@ -46,7 +47,7 @@ namespace Grimoire.Botting.Commands.Combat
             }
             else
             {
-                while (instance.IsRunning && Player.IsLoggedIn && Player.IsAlive && !Player.TempInventory.ContainsItem(ItemName, Quantity))
+                while (instance.IsRunning && instance.player.IsLoggedIn && instance.player.IsAlive && !instance.player.TempInventory.ContainsItem(ItemName, Quantity))
                 {
                     await kill.Execute(instance);
                     await Task.Delay(1000);

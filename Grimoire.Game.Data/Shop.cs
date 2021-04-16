@@ -6,7 +6,11 @@ namespace Grimoire.Game.Data
 {
     public class Shop
     {
-        public static Shop Instance = new Shop();
+        private Flash flash;
+        public Shop(Flash newFlash)
+        {
+            flash = newFlash;
+        }
 
         [JsonProperty("sName")]
         public string Name
@@ -35,41 +39,41 @@ namespace Grimoire.Game.Data
             set;
         }
 
-        public static bool IsShopLoaded => Flash.Call<bool>("IsShopLoaded", new string[0]);
+        public bool IsShopLoaded => flash.Call<bool>("IsShopLoaded", new string[0]);
 
-        public static void BuyItem(string name)
+        public void BuyItem(string name)
         {
-            Flash.Call("BuyItem", name);
+            flash.Call("BuyItem", name);
         }
 
-        public static void ResetShopInfo()
+        public void ResetShopInfo()
         {
-            Flash.Call("ResetShopInfo", new string[0]);
+            flash.Call("ResetShopInfo", new string[0]);
         }
 
-        public static void Load(int id)
+        public void Load(int id)
         {
-            Flash.Call("LoadShop", id.ToString());
+            flash.Call("LoadShop", id.ToString());
         }
 
-        public static void SellItem(string name)
+        public void SellItem(string name)
         {
-            Flash.Call("SellItem", name);
+            flash.Call("SellItem", name);
         }
 
-        public static void LoadHairShop(string id)
+        public void LoadHairShop(string id)
         {
-            Flash.Call("LoadHairShop", id);
+            flash.Call("LoadHairShop", id);
         }
 
-        public static void LoadHairShop(int id)
+        public void LoadHairShop(int id)
         {
-            Flash.Call("LoadHairShop", id.ToString());
+            flash.Call("LoadHairShop", id.ToString());
         }
 
-        public static void LoadArmorCustomizer()
+        public void LoadArmorCustomizer()
         {
-            Flash.Call("LoadArmorCustomizer", new string[0]);
+            flash.Call("LoadArmorCustomizer", new string[0]);
         }
     }
 }

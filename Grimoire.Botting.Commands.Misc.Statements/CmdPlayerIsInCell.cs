@@ -16,12 +16,13 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
         public Task Execute(IBotEngine instance)
         {
+            Configuration configuration = instance.Configuration;
             string Val1;
             string Val2;
 
             if ( IsVar(Value1) )
             {
-                Val1 = Configuration.Tempvariable[GetVar(Value1)];
+                Val1 = configuration.Tempvariable[GetVar(Value1)];
             } 
             else
             {
@@ -30,14 +31,14 @@ namespace Grimoire.Botting.Commands.Misc.Statements
 
             if (IsVar(Value2))
             {
-                Val2 = Configuration.Tempvariable[GetVar(Value2)];
+                Val2 = configuration.Tempvariable[GetVar(Value2)];
             }
             else
             {
                 Val2 = Value2;
             }
 
-            string reqs = Flash.Call<string>("CheckCellPlayer", new string[] {
+            string reqs = instance.flash.Call<string>("CheckCellPlayer", new string[] {
                 Val1,
                 Val2
             });
